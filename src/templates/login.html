@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% from 'renderForm.html' import renderForm %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1 class="text-center">Авторизация</h1>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col col-lg-10 col-xl-9 col-xxl-8">
+            {{ renderForm(form) }}
+        </div>
+    </div>
+    {% if message %}
+    <div class="row justify-content-center">
+        <div class="col col-lg-10 col-xl-9 col-xxl-8">
+            <div class="alert alert-danger">
+                {{ message }}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

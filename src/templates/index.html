@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block head %}
+<script src="{{url_for('static', filename='scripts/index.js')}}" defer></script>
+{% endblock %}
+
+
+{% block content %}
+<div class="container">
+<div class="row">
+<div class="col col-lg-4 sidebar">
+<div class="container">
+<div class="row">
+    <div class="col">
+        <h2>Поиск рецепта</h2>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <input type="text" id="inp-title" class="form-control" placeholder="Название рецепта">
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <h4>Категории</h4>
+        <div style="max-height: 10em; overflow: auto;" class="ps-1">
+            {% for category in categories %}
+            <div>
+                <input type="checkbox" id="{{'inp-category-' + category.id|string}}" class="form-check-input">
+                <label class="form-check-label" for="{{'inp-category-' + category.id|string}}">{{category.title}}</label>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <h4>Ингредиенты</h4>
+        <div style="max-height: 10em; overflow: auto;" class="ps-1">
+            {% for ingredient in ingredients %}
+            <div>
+                <input type="checkbox" id="{{'inp-add-' + ingredient.id|string}}" class="form-check-input">
+                <label class="form-check-label" for="{{'inp-add-' + ingredient.id|string}}">{{ingredient.title}}</label>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <h4>Исключить ингредиенты</h4>
+        <div style="max-height: 10em; overflow: auto;" class="ps-1">
+            {% for ingredient in ingredients %}
+            <div>
+                <input type="checkbox" id="{{'inp-remove-' + ingredient.id|string}}" class="form-check-input">
+                <label class="form-check-label" for="{{'inp-remove-' + ingredient.id|string}}">{{ingredient.title}}</label>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col text-center">
+        <button class="btn btn-primary m-2" id="btn-search">Поиск</button>
+    </div>
+</div>
+</div>
+</div>
+<div class="col col-auto col-lg-8">
+<div class="container">
+    {% for recipe in recipes %}
+    <div class="row border rounded py-2 my-2">
+        <div class="col-3 col-md-2 pe-0">
+            {% if recipe.pictures[0] %}
+            <img src="{{url_for('static', filename='images/' + recipe.pictures[0].title)}}" class="img-fluid" alt="...">
+            {% endif %}
+        </div>
+        <div class="col">
+            <div class="container">
+                <div class="row">
+                    <div class="col-auto">
+                        <h1>{{recipe.title}}</h1>
+                    </div>
+                    <!-- {% if current_user.is_authenticated and (job.team_leader == current_user.id or current_user.id == 1) %}
+                <div class="col-auto">
+                    <a class="btn btn-warning" href="./editjob/{{job.id}}" role="button">Edit</a>
+                </div>
+                <div class="col-auto">
+                    <a class="btn btn-danger" href="./deletejob/{{job.id}}" role="button">Delete</a>
+                </div>
+                {% endif %} -->
+                </div>
+                <div class="row overflow-auto">
+                    {% for category in recipe.categories %}
+                    <div class="col">
+                        <div class="badge bg-success">{{category.title}}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="row overflow-auto">
+                    <div class="col">{% for ingredient in recipe.ingredients %}
+                        <div class="badge bg-info">{{ingredient.title}}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+</div>
+</div>
+</div>
+{% endblock %}

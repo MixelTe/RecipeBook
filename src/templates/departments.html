@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1 class="text-center">List of Departments</h1>
+        </div>
+    </div>
+    {% if current_user.is_authenticated %}
+    <div class="row mb-3">
+        <div class="col text-center">
+            <a class="btn btn-success" href="/add_department" role="button">Add Department</a>
+        </div>
+    </div>
+    {% endif %}
+    {% for department in departments %}
+    <div class="row">
+        <div class="col-auto">
+            <h1>Department #{{department.id}}</h1>
+        </div>
+        {% if current_user.is_authenticated and (department.chief == current_user.id or current_user.id == 1) %}
+        <div class="col-auto">
+            <a class="btn btn-warning" href="./edit_department/{{department.id}}" role="button">Edit</a>
+        </div>
+        <div class="col-auto">
+            <a class="btn btn-danger" href="./delete_department/{{department.id}}" role="button">Delete</a>
+        </div>
+        {% endif %}
+    </div>
+    <div class="row overflow-auto">
+        <div class="col">
+            <table class="table">
+                <tr class="table-success text-center align-middle">
+                    <th class="text-start">Title of department</th>
+                    <th>Chief</th>
+                    <th>Members</th>
+                    <th>Department Email</th>
+                </tr>
+                <tr class="table-info text-center align-middle">
+                    <td class="text-start">{{department.title}}</td>
+                    <td>{{department.chiefUser.name}} {{department.chiefUser.surname}}</td>
+                    <td>{{department.members}}</td>
+                    <td>{{department.email}}</td>
+                </tr>
+                <colgroup class="border-0">
+                    <col span="1" style="width: 40%;">
+                    <col span="1" style="width: 15%;">
+                    <col span="1" style="width: 15%;">
+                    <col span="1" style="width: 25%;">
+                </colgroup>
+            </table>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
