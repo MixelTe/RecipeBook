@@ -35,7 +35,8 @@ def main():
     # app.register_blueprint(users_api.blueprint)
     # api.add_resource(users_resource.UsersListResource, '/api/v2/users')
     # api.add_resource(users_resource.UsersResource, '/api/v2/users/<int:user_id>')
-    app.run(debug=True)
+    if __name__ == '__main__':
+        app.run(debug=True)
 
 
 @app.route("/")
