@@ -13,8 +13,6 @@ from data.users import User
 from data.recipes import Recipe
 from data.ingredients import Ingredient, association_table as IngredientRecipe
 from data.categories import Category
-import logging
-logging.basicConfig(filename='recipeBook.log', format='%(asctime)s %(levelname)s %(name)s %(message)s', level=logging.DEBUG, encoding="utf-8")
 # from forms.departments import DepartmentForm
 # from forms.job import JobForm
 # from forms.login import LoginForm
@@ -321,5 +319,4 @@ def load_user(user_id):
     return db_sess.query(User).get(user_id)
 
 
-if __name__ == '__main__':
-    main()
+main()
