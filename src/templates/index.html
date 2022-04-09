@@ -136,33 +136,32 @@
     </div>
     {% endfor %}
     <div class="row">
-        <div class="col mt-2 text-center">
-            <div class="btn-group">
+        <div class="col mt-2 text-center d-flex justify-content-center">
+            <div class="pagination">
                 {% if page != 0 %}
-                <button type="button" class="btn btn-primary" id="btn-page-prev">←</button>
+                <li class="page-item" id="btn-page-prev"><a class="page-link" href="#">&laquo;</a></li>
                 {% endif %}
                 {% if pageCount > 1 %}
-                <button type="button" class="btn btn-primary {% if page == 0 %}active{% endif %}" id="btn-page-0">1</button>
+                <li class="page-item {% if page == 0 %}active{% endif %}" id="btn-page-0"><a class="page-link" href="#">1</a></li>
                 {% endif %}
             {% if page > 3 %}
             </div>
-            <div class="btn-group">
+            <div class="pagination ms-2">
             {% endif %}
-
                 {% for i in range(page - 2, page + 3) %}
                     {% if i > 0 and i < pageCount - 1 %}
-                    <button type="button" class="btn btn-primary {% if page == i %}active{% endif %}" id="btn-page-{{i}}">{{i + 1}}</button>
+                    <li class="page-item {% if page == i %}active{% endif %}" id="btn-page-{{i}}"><a class="page-link" href="#">{{i + 1}}</a></li>
                     {% endif %}
                 {% endfor %}
             {% if page < pageCount - 4 %}
             </div>
-            <div class="btn-group">
+            <div class="pagination ms-2">
             {% endif %}
                 {% if pageCount > 1 %}
-                <button type="button" class="btn btn-primary {% if page == pageCount - 1 %}active{% endif %}" id="btn-page-{{pageCount - 1}}">{{pageCount}}</button>
+                <li class="page-item {% if page == pageCount - 1 %}active{% endif %}" id="btn-page-{{pageCount - 1}}"><a class="page-link" href="#">{{pageCount}}</a></li>
                 {% endif %}
                 {% if page < pageCount - 1 %}
-                <button type="button" class="btn btn-primary" id="btn-page-next">→</button>
+                <li class="page-item" id="btn-page-next"><a class="page-link" href="#">&raquo;</a></li>
                 {% endif %}
             </div>
         </div>
@@ -172,7 +171,3 @@
 </div>
 </div>
 {% endblock %}
-
-<!-- {% block footer %}
-<a href="https://www.flaticon.com/free-icons/rice" title="rice icons" class="text-muted">Rice icons created by smalllikeart - Flaticon</a>
-{% endblock %} -->
