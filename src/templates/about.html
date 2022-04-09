@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h3>Сайт для хранения и поиска рецептов.</h3>
+            <h4>Рецепты можно искать по категориям и ингредиентам.</h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <span>Спасибо за картинку:</span>
+            <img src="{{url_for('static', filename='images/rice-bowl.png')}}" alt="Картинка" style="width: 2em;">
+            <a href="https://www.flaticon.com/free-icons/rice" title="rice icons">Rice icons created by smalllikeart - Flaticon</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+<!-- {% block footer %}
+<a href="https://www.flaticon.com/free-icons/rice" title="rice icons" class="text-muted">Rice icons created by smalllikeart - Flaticon</a>
+{% endblock %} -->
