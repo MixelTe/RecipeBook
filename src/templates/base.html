@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-100">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,7 +9,7 @@
     <title>{{ title }}</title>
     {% block head %}{% endblock %}
 </head>
-<body>
+<body class="d-flex flex-column h-100">
     <nav class="navbar navbar-expand-sm navbar-light bg-light">
         <div class="container-fluid">
             <a class="navbar-brand h1 fs-2" href="./">Книга рецептов</a>
@@ -53,5 +53,13 @@
         </div>
     </nav>
     {% block content %}{% endblock %}
+    <footer class="footer mt-auto py-3 bg-light">
+        <div class="container">
+            <ul class="nav">
+                <a class="nav-link" href="/">Поиск рецепта</a>
+                <a class="nav-link" href="/about">О</a>
+            </ul>
+        </div>
+    </footer>
 </body>
 </html>

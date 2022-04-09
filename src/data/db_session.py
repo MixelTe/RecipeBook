@@ -31,3 +31,8 @@ def global_init(db_file):
 def create_session() -> Session:
     global __factory
     return __factory()
+
+
+@sa.event.listens_for(sa.engine.Engine, 'connect')
+def sqlite_engine_connect(dbapi_conn, connection_record):
+    dbapi_conn.create_function('lower', 1, str.lower)

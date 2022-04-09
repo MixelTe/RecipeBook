@@ -1,3 +1,4 @@
+import math
 from flask import Flask, abort, jsonify, make_response, redirect, render_template, request
 from flask_restful import Api
 from flask_login import LoginManager, current_user, login_required, login_user, logout_user
@@ -24,6 +25,7 @@ app.config['JWT_SECRET_KEY'] = 'yandexlyceum_secret_key'
 login_manager = LoginManager()
 login_manager.init_app(app)
 jwt_manager = JWTManager(app)
+RECIPE_ON_PAGE = 20
 
 
 def main():
@@ -36,57 +38,13 @@ def main():
     app.run(debug=True)
 
 
-@app.errorhandler(404)
-def not_found(error):
-    if (request.path.startswith("/api/")):
-        return make_response(jsonify({'error': 'Not found'}), 404)
-    else:
-        return render_template("error.html", title="404", text="Page not found"), 404
-
-
-@app.errorhandler(500)
-def internal_server_error(error):
-    if (request.path.startswith("/api/")):
-        return make_response(jsonify({'error': 'Internal Server Error'}), 500)
-    else:
-        return render_template("error.html", title="500", text="Internal Server Error"), 500
-
-
-@app.errorhandler(401)
-def unauthorized(error):
-    if (request.path.startswith("/api/")):
-        return make_response(jsonify({'error': 'Unauthorized'}), 401)
-    else:
-        return redirect("/login")
-
-
-@jwt_manager.expired_token_loader
-def expired_token_loader():
-    return jsonify({'error': 'The JWT has expired'}), 401
-
-
-@jwt_manager.invalid_token_loader
-def invalid_token_loader(error):
-    return jsonify({'error': 'Invalid JWT'}), 401
-
-
-@jwt_manager.unauthorized_loader
-def unauthorized_loader(error):
-    return jsonify({'error': 'Missing Authorization Header'}), 401
-
-
-@login_manager.user_loader
-def load_user(user_id):
-    db_sess = db_session.create_session()
-    return db_sess.query(User).get(user_id)
-
-
 @app.route("/")
 def index():
     title = request.args.get("title", None)
     categories = request.args.get("categories", None)
     ingredientsAdd = request.args.get("ingredientsAdd", None)
     ingredientsRemove = request.args.get("ingredientsRemove", None)
+    page = int(request.args.get("page", 0))
 
     session = db_session.create_session()
     recipesQuery = session.query(Recipe)
@@ -94,22 +52,49 @@ def index():
     if (categories):
         categories = list(map(int, categories.split("-")))
         recipesQuery = recipesQuery.filter(Recipe.categories.any(Category.id.in_(categories)))
+    else:
+        categories = []
     if (ingredientsAdd):
         ingredientsAdd = list(map(int, ingredientsAdd.split("-")))
-        recipesQuery = recipesQuery.filter(Recipe.ingredients.any(Ingredient.id.in_(ingredientsAdd)))
+        # recipesQuery = recipesQuery.filter(Recipe.ingredients.any(Ingredient.id.in_(ingredientsAdd)))
+        for ingredient in ingredientsAdd:
+            recipesQuery = recipesQuery.filter(Recipe.ingredients.any(Ingredient.id == ingredient))
+    else:
+        ingredientsAdd = []
     if (ingredientsRemove):
         ingredientsRemove = list(map(int, ingredientsRemove.split("-")))
         recipesQuery = recipesQuery.filter(~Recipe.ingredients.any(Ingredient.id.in_(ingredientsRemove)))
-    # recipes = session.query(Recipe).all()
-    recipes = recipesQuery.all()
+    else:
+        ingredientsRemove = []
     if (title):
-        title = title.lower()
-        recipes = list(filter(lambda el: title in el.title.lower(), recipes))
-    ingredients = session.query(Ingredient).all()
-    ingredients.sort(key=lambda el: el.title)
-    categoriesAll = session.query(Category).all()
-    categoriesAll.sort(key=lambda el: el.title)
-    return render_template("index.html", title="Рецепты", recipes=recipes, ingredients=ingredients, categories=categoriesAll)
+        recipesQuery = recipesQuery.filter(func.lower(Recipe.title).contains(func.lower(title)))
+    else:
+        title = ""
+    # recipes = session.query(Recipe).all()
+    count = recipesQuery.count()
+    pageCount = math.ceil(count / RECIPE_ON_PAGE)
+    # recipes = recipesQuery.all()
+    recipes = recipesQuery.slice(page * RECIPE_ON_PAGE, (page + 1) * RECIPE_ON_PAGE).all()
+    # if (title):
+    #     title = title.lower()
+    #     recipes = list(filter(lambda el: title in el.title.lower(), recipes))
+
+    ingredients = session.query(Ingredient).order_by(Ingredient.title).all()
+    categoriesAll = session.query(Category).order_by(Category.title).all()
+    data = {
+        "title": title,
+        "recipes": recipes,
+        "ingredients": ingredients,
+        "categories": categoriesAll,
+        "search_categories": categories,
+        "search_ingredientsAdd": ingredientsAdd,
+        "search_ingredientsRemove": ingredientsRemove,
+        "search_title": title,
+        "count": count,
+        "pageCount": pageCount,
+        "page": page,
+    }
+    return render_template("index.html", **data)
 
 
 # @app.route("/register", methods=['GET', 'POST'])
@@ -223,7 +208,6 @@ def index():
 #     return redirect('/')
 
 
-
 # @app.route("/departments")
 # def departments():
 #     session = db_session.create_session()
@@ -283,6 +267,51 @@ def index():
 #     else:
 #         abort(404)
 #     return redirect('/departments')
+
+
+@app.errorhandler(404)
+def not_found(error):
+    if (request.path.startswith("/api/")):
+        return make_response(jsonify({'error': 'Not found'}), 404)
+    else:
+        return render_template("error.html", title="404", text="Page not found"), 404
+
+
+@app.errorhandler(500)
+def internal_server_error(error):
+    if (request.path.startswith("/api/")):
+        return make_response(jsonify({'error': 'Internal Server Error'}), 500)
+    else:
+        return render_template("error.html", title="500", text="Internal Server Error"), 500
+
+
+@app.errorhandler(401)
+def unauthorized(error):
+    if (request.path.startswith("/api/")):
+        return make_response(jsonify({'error': 'Unauthorized'}), 401)
+    else:
+        return redirect("/login")
+
+
+@jwt_manager.expired_token_loader
+def expired_token_loader():
+    return jsonify({'error': 'The JWT has expired'}), 401
+
+
+@jwt_manager.invalid_token_loader
+def invalid_token_loader(error):
+    return jsonify({'error': 'Invalid JWT'}), 401
+
+
+@jwt_manager.unauthorized_loader
+def unauthorized_loader(error):
+    return jsonify({'error': 'Missing Authorization Header'}), 401
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    db_sess = db_session.create_session()
+    return db_sess.query(User).get(user_id)
 
 
 if __name__ == '__main__':
