@@ -2,7 +2,7 @@ import math
 from flask import Flask, abort, jsonify, make_response, redirect, render_template, request
 from flask_restful import Api
 from flask_login import LoginManager, current_user, login_required, login_user, logout_user
-from flask_jwt_simple import JWTManager
+# from flask_jwt_simple import JWTManager
 from sqlalchemy import func
 from data import db_session
 # from api import jobs_api
@@ -24,7 +24,7 @@ app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 app.config['JWT_SECRET_KEY'] = 'yandexlyceum_secret_key'
 login_manager = LoginManager()
 login_manager.init_app(app)
-jwt_manager = JWTManager(app)
+# jwt_manager = JWTManager(app)
 RECIPE_ON_PAGE = 20
 
 
@@ -298,19 +298,19 @@ def unauthorized(error):
         return redirect("/login")
 
 
-@jwt_manager.expired_token_loader
-def expired_token_loader():
-    return jsonify({'error': 'The JWT has expired'}), 401
+# @jwt_manager.expired_token_loader
+# def expired_token_loader():
+#     return jsonify({'error': 'The JWT has expired'}), 401
 
 
-@jwt_manager.invalid_token_loader
-def invalid_token_loader(error):
-    return jsonify({'error': 'Invalid JWT'}), 401
+# @jwt_manager.invalid_token_loader
+# def invalid_token_loader(error):
+#     return jsonify({'error': 'Invalid JWT'}), 401
 
 
-@jwt_manager.unauthorized_loader
-def unauthorized_loader(error):
-    return jsonify({'error': 'Missing Authorization Header'}), 401
+# @jwt_manager.unauthorized_loader
+# def unauthorized_loader(error):
+#     return jsonify({'error': 'Missing Authorization Header'}), 401
 
 
 @login_manager.user_loader
