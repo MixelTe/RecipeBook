@@ -36,7 +36,7 @@ def main():
     # api.add_resource(users_resource.UsersListResource, '/api/v2/users')
     # api.add_resource(users_resource.UsersResource, '/api/v2/users/<int:user_id>')
     if __name__ == '__main__':
-        app.run(debug=True)
+        app.run()
 
 
 @app.route("/")
@@ -280,15 +280,16 @@ def not_found(error):
     if (request.path.startswith("/api/")):
         return make_response(jsonify({'error': 'Not found'}), 404)
     else:
-        return render_template("error.html", title="404", text="Page not found"), 404
+        return render_template("error.html", title="404", text="Страница не найдена"), 404
 
 
 @app.errorhandler(500)
+@app.errorhandler(Exception)
 def internal_server_error(error):
     if (request.path.startswith("/api/")):
         return make_response(jsonify({'error': 'Internal Server Error'}), 500)
     else:
-        return render_template("error.html", title="500", text="Internal Server Error"), 500
+        return render_template("error.html", title="500", text="Произошла ошибка на сервере"), 500
 
 
 @app.errorhandler(401)
