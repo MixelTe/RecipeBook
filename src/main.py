@@ -190,6 +190,22 @@ def logout():
     return redirect("/")
 
 
+@app.route("/recipe/<int:id>")
+def recipe(id):
+    session = db_session.create_session()
+    recipe = session.query(Recipe).get(id)
+    if (not recipe):
+        return render_template("error.html", title="404", text="Рецепт не найден"), 404
+    ingredients = session.execute("""
+        select i.title, ri.count
+        from RecipesIngredients as ri
+        join Ingredients as i on i.id = ri.ingredient
+        where ri.recipe = :recipe
+        order by i.title
+    """, {"recipe": recipe.id}).fetchall()
+    return render_template('/recipe.html', title=recipe.title, recipe=recipe, ingredients=ingredients)
+
+
 # @app.route("/addjob", methods=['GET', 'POST'])
 # @login_required
 # def addjob():

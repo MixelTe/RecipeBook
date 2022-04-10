@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link href="{{url_for('static', filename='css/recipe.css')}}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1 class="text-center">{{recipe.title}}</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col d-flex justify-content-center">
+            <div class="img-container" id="img-container">
+                {% for picture in recipe.pictures %}
+                <img src="{{url_for('static', filename='images/' + picture.title)}}" class="img-fluid">
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col col-lg-10">
+            <dl class="row">
+                {% for ingredient in ingredients %}
+                <dt class="col-sm-3">{{ingredient[0]}}</dt>
+                <dd class="col-sm-9">{{ingredient[1]}}</dd>
+                {% endfor %}
+            </dl>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col col-lg-10">
+            <p class="fs-3">{{recipe.description}}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

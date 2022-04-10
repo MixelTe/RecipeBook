@@ -54,3 +54,10 @@
 label, input[type="checkbox"] {
     cursor: pointer;
 }
+.link {
+    text-decoration: none;
+    text-decoration-skip-ink: none;
+}
+.link:hover {
+    text-decoration: underline;
+}

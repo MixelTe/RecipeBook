@@ -1,0 +1,21 @@
+.img-container {
+    overflow: overlay;
+    max-height: 50vh;
+    display: flex;
+    border-radius: 1em;
+}
+.img-container img {
+    height: 100%;
+    width: auto;
+}
+
+.img-container::-webkit-scrollbar {
+    height: 0.7em;
+}
+/* .img-container::-webkit-scrollbar-track {
+} */
+.img-container::-webkit-scrollbar-thumb {
+    background-color: lightgrey;
+    outline: 2px solid slategrey;
+    border-radius: 1em;
+}
