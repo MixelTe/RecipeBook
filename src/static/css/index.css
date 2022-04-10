@@ -15,9 +15,9 @@
 }
 .input-add {
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%2332cd32' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10 l8 0 M10 6 l0 8'/%3e%3c/svg%3e");
-    border-top-right-radius: 0;
+    /* border-top-right-radius: 0;
     border-bottom-right-radius: 0;
-    border-right: none;
+    border-right: none; */
 }
 .input-add:checked {
     background-color: limegreen;
@@ -26,9 +26,9 @@
 }
 .input-remove {
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23ff6347' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10 l8 0'/%3e%3c/svg%3e");
-    border-top-left-radius: 0;
+    /* border-top-left-radius: 0;
     border-bottom-left-radius: 0;
-    margin-left: -0.3em;
+    margin-left: -0.3em; */
 }
 .input-remove:checked {
     background-color: tomato;
@@ -49,4 +49,8 @@
     height: 100%;
     object-fit: cover;
     border-radius: 0.25rem;
+}
+
+label, input[type="checkbox"] {
+    cursor: pointer;
 }

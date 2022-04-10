@@ -1,7 +1,8 @@
 "use strict"
 const inp_title = document.getElementById("inp-title");
 const search_form = document.getElementById("search-form");
-const badge_ingredients = document.getElementById("badge-ingredients");
+const badge_ingredients_add = document.getElementById("badge-ingredients-add");
+const badge_ingredients_remove = document.getElementById("badge-ingredients-remove");
 const badge_categories = document.getElementById("badge-categories");
 
 const categories = getById("inp-category-");
@@ -42,10 +43,12 @@ categories.forEach(inp =>
 })
 function setIngredientsBadge()
 {
-    let count = 0;
-    ingredientsAdd.forEach(inp => count += inp.checked ? 1 : 0);
-    ingredientsRemove.forEach(inp => count += inp.checked ? 1 : 0);
-    badge_ingredients.innerText = count == 0 ? "" : `${count}`;
+    let countAdd = 0;
+    let countRemove = 0;
+    ingredientsAdd.forEach(inp => countAdd += inp.checked ? 1 : 0);
+    ingredientsRemove.forEach(inp => countRemove += inp.checked ? 1 : 0);
+    badge_ingredients_add.innerText = countAdd == 0 ? "" : `${countAdd}`;
+    badge_ingredients_remove.innerText = countRemove == 0 ? "" : `-${countRemove}`;
 }
 function setCategoriesBadge()
 {

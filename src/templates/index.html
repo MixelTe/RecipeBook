@@ -39,17 +39,19 @@
 </div>
 <div class="row">
     <div class="col">
-        <h4>Ингредиенты <span class="badge bg-success" id="badge-ingredients"></span></h4>
+        <h4>Ингредиенты <span class="badge bg-success" id="badge-ingredients-add"></span> <span class="badge bg-warning" id="badge-ingredients-remove"></span></h4>
         <div style="max-height: 11.5em; overflow: auto;" class="ps-1 fs-5">
             {% for ingredient in ingredients %}
             <div>
-                <input type="checkbox" id="{{'inp-add-' + ingredient.id|string}}" class="input-add"
+                <input type="checkbox" id="{{'inp-add-' + ingredient.id|string}}" class="input-add fs-4"
                 {% if ingredient.id in search_ingredientsAdd %} checked {% endif %}
                 >
-                <input type="checkbox" id="{{'inp-remove-' + ingredient.id|string}}" class="input-remove"
+                <label class="form-check-label" for="{{'inp-add-' + ingredient.id|string}}">{{ingredient.title}}</label>
+                <label class="ps-4 float-end me-2">
+                <input type="checkbox" id="{{'inp-remove-' + ingredient.id|string}}" class="input-remove fs-4"
                 {% if ingredient.id in search_ingredientsRemove %} checked {% endif %}
                 >
-                <label class="form-check-label" for="{{'inp-add-' + ingredient.id|string}}">{{ingredient.title}}</label>
+                </label>
             </div>
             {% endfor %}
         </div>
