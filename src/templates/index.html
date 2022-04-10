@@ -100,12 +100,14 @@
     </div>
     {% for recipe in recipes %}
     <div class="row border rounded py-2 my-2">
-        <div class="col-3 col-md-2 pe-0">
+        <div class="col-3 col-md-2 pe-0 d-flex align-items-center">
+            <div class="img-container">
             {% if recipe.pictures[0] %}
             <img src="{{url_for('static', filename='images/' + recipe.pictures[0].title)}}" class="img-fluid" alt="...">
             {% else %}
             <img src="{{url_for('static', filename='images/rice-bowl.png')}}" class="img-fluid img-thumbnail" alt="...">
             {% endif %}
+            </div>
         </div>
         <div class="col">
             <div class="container">
