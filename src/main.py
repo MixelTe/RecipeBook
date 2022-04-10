@@ -206,6 +206,34 @@ def recipe(id):
     return render_template('/recipe.html', title=recipe.title, recipe=recipe, ingredients=ingredients)
 
 
+@app.route("/editRecipe/<int:id>")
+@login_required
+def editRecipe(id):
+    session = db_session.create_session()
+    recipe = session.query(Recipe).get(id)
+    if (not recipe):
+        return render_template("error.html", title="404", text="Рецепт не найден"), 404
+    if (recipe.creator != current_user.id):
+        return render_template("error.html", title="404", text="Рецепт не найден!"), 404
+    ingredients = session.execute("""
+        select i.title, ri.count
+        from RecipesIngredients as ri
+        join Ingredients as i on i.id = ri.ingredient
+        where ri.recipe = :recipe
+        order by i.title
+    """, {"recipe": recipe.id}).fetchall()
+    ingredientsAll = session.query(Ingredient).order_by(Ingredient.title).all()
+    categoriesAll = session.query(Category).order_by(Category.title).all()
+    data = {
+        "title": recipe.title,
+        "recipe": recipe,
+        "ingredients": ingredients,
+        "ingredientsAll": ingredientsAll,
+        "categoriesAll": categoriesAll,
+    }
+    return render_template('/editRecipe.html', **data)
+
+
 # @app.route("/addjob", methods=['GET', 'POST'])
 # @login_required
 # def addjob():

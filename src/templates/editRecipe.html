@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link href="{{url_for('static', filename='css/recipe.css')}}" rel="stylesheet">
+<link rel="stylesheet" href="{{url_for('static', filename='css/md-editor.css')}}" />
+<script type="text/javascript" src="{{url_for('static', filename='scripts/md-editor/editor.js')}}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='scripts/md-editor/marked.js')}}"></script>
+<script type="text/javascript" src="{{url_for('static', filename='scripts/editRecipe.js')}}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <h1 class="text-center">{{recipe.title}}</h1>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col d-flex justify-content-center">
+            <div class="img-container" id="img-container">
+                {% for picture in recipe.pictures %}
+                <img src="{{url_for('static', filename='images/' + picture.title)}}" class="img-fluid">
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center mb-4">
+        <div class="col col-lg-10">
+            <h4>Категории:</h4>
+            {% for category in recipe.categories %}
+                <span class="badge bg-success fs-6" id="">
+                    {{category.title}}
+                    <button class="btn btn-danger">-</button>
+                </span>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="row justify-content-center mb-4">
+        <div class="col col-lg-10">
+            <input type="text" list="category-suggestions" placeholder="Категория" id="inp-category">
+            <button class="btn btn-success">Добавить</button>
+            <datalist id="category-suggestions">
+                <optgroup>
+                {% for category in categoriesAll %}
+                <option id="{{category.id}}">{{category.title}}</option>
+                {% endfor %}
+                </optgroup>
+            </datalist>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col col-lg-10">
+            <dl class="row">
+                {% for ingredient in ingredients %}
+                <dt class="col-sm-3">{{ingredient[0]}}</dt>
+                <dd class="col-sm-9">
+                    <input type="text" value="{{ingredient[1]}}" class="w-75">
+                    <button class="btn btn-danger float-end">-</button>
+                </dd>
+                {% endfor %}
+            </dl>
+        </div>
+    </div>
+    <div class="row justify-content-center mb-4">
+        <div class="col col-lg-10">
+            <input type="text" list="ingredient-suggestions" placeholder="Ингредиент" id="inp-ingredient">
+            <button class="btn btn-success">Добавить</button>
+            <datalist id="ingredient-suggestions">
+                <optgroup>
+                {% for ingredient in ingredientsAll %}
+                <option id="{{ingredient.id}}">{{ingredient.title}}</option>
+                {% endfor %}
+                </optgroup>
+            </datalist>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col col-lg-10">
+            <textarea id="textarea">{{recipe.description}}</textarea>
+        </div>
+    </div>
+</div>
+<script>
+    const toolbar = Editor.toolbar;
+    toolbar[10] = "|"
+    var editor = new Editor({
+        element: document.getElementById("textarea"),
+        status: false,
+        toolbar: toolbar
+    });
+
+    editor.render();
+</script>
+{% endblock %}
