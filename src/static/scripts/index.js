@@ -1,10 +1,58 @@
 "use strict"
 const inp_title = document.getElementById("inp-title");
 const search_form = document.getElementById("search-form");
+const badge_ingredients = document.getElementById("badge-ingredients");
+const badge_categories = document.getElementById("badge-categories");
 
 const categories = getById("inp-category-");
 const ingredientsAdd = getById("inp-add-");
 const ingredientsRemove = getById("inp-remove-");
+setIngredientsBadge();
+setCategoriesBadge();
+
+ingredientsAdd.forEach(inp =>
+{
+    const id = getId(inp.id, "inp-add-");
+    let inpR;
+    for (let i = 0; i < ingredientsRemove.length; i++)
+    {
+        const inp2 = ingredientsRemove[i];
+        const id2 = getId(inp2.id, "inp-remove-");
+        if (id == id2)
+        {
+            inpR = inp2
+            break;
+        }
+    }
+    if (!inpR) return;
+    inp.addEventListener("change", () =>
+    {
+        if (inp.checked) inpR.checked = false;
+        setIngredientsBadge()
+    });
+    inpR.addEventListener("change", () =>
+    {
+        if (inpR.checked) inp.checked = false;
+        setIngredientsBadge()
+    });
+});
+categories.forEach(inp =>
+{
+    inp.addEventListener("change", setCategoriesBadge);
+})
+function setIngredientsBadge()
+{
+    let count = 0;
+    ingredientsAdd.forEach(inp => count += inp.checked ? 1 : 0);
+    ingredientsRemove.forEach(inp => count += inp.checked ? 1 : 0);
+    badge_ingredients.innerText = count == 0 ? "" : `${count}`;
+}
+function setCategoriesBadge()
+{
+    let count = 0;
+    categories.forEach(inp => count += inp.checked ? 1 : 0);
+    badge_categories.innerText = count == 0 ? "" : `${count}`;
+}
 
 
 function getById(id)

@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block head %}
+<link href="{{url_for('static', filename='css/index.css')}}" rel="stylesheet">
 <script src="{{url_for('static', filename='scripts/index.js')}}" defer></script>
 {% endblock %}
 
@@ -23,8 +24,8 @@
 </div>
 <div class="row">
     <div class="col">
-        <h4>Категории</h4>
-        <div style="max-height: 10em; overflow: auto;" class="ps-1">
+        <h4>Категории <span class="badge bg-success" id="badge-categories"></span></h4>
+        <div style="max-height: 11.5em; overflow: auto;" class="ps-1 fs-5">
             {% for category in categories %}
             <div>
                 <input type="checkbox" id="{{'inp-category-' + category.id|string}}" class="form-check-input"
@@ -38,12 +39,15 @@
 </div>
 <div class="row">
     <div class="col">
-        <h4>Ингредиенты</h4>
-        <div style="max-height: 10em; overflow: auto;" class="ps-1">
+        <h4>Ингредиенты <span class="badge bg-success" id="badge-ingredients"></span></h4>
+        <div style="max-height: 11.5em; overflow: auto;" class="ps-1 fs-5">
             {% for ingredient in ingredients %}
             <div>
-                <input type="checkbox" id="{{'inp-add-' + ingredient.id|string}}" class="form-check-input"
+                <input type="checkbox" id="{{'inp-add-' + ingredient.id|string}}" class="input-add"
                 {% if ingredient.id in search_ingredientsAdd %} checked {% endif %}
+                >
+                <input type="checkbox" id="{{'inp-remove-' + ingredient.id|string}}" class="input-remove"
+                {% if ingredient.id in search_ingredientsRemove %} checked {% endif %}
                 >
                 <label class="form-check-label" for="{{'inp-add-' + ingredient.id|string}}">{{ingredient.title}}</label>
             </div>
@@ -51,7 +55,7 @@
         </div>
     </div>
 </div>
-<div class="row">
+<!-- <div class="row">
     <div class="col">
         <h4>Исключить ингредиенты</h4>
         <div style="max-height: 10em; overflow: auto;" class="ps-1">
@@ -65,7 +69,7 @@
             {% endfor %}
         </div>
     </div>
-</div>
+</div> -->
 <div class="row">
     <div class="col text-center">
         <button class="btn btn-primary m-2" id="btn-search" type="submit">Поиск</button>
