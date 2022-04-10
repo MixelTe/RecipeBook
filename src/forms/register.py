@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import PasswordField, StringField, SubmitField, EmailField, IntegerField, ValidationError
+from wtforms import PasswordField, StringField, SubmitField, EmailField, ValidationError
 from wtforms.validators import DataRequired
 from data import db_session
 from data.users import User
@@ -7,24 +7,19 @@ from data.users import User
 
 def passwordCheck(form, field):
     if field.data != form.password.data:
-        raise ValidationError('Passwords do not match')
+        raise ValidationError('Пароли не совпадают')
 
 
 def userExistCheck(form, field):
     db_sess = db_session.create_session()
     if db_sess.query(User).filter(User.email == field.data).first():
-        raise ValidationError('User with this login already exists')
+        raise ValidationError('Пользователь с таким email уже существует')
 
 
 class RegisterForm(FlaskForm):
-    email = EmailField('Login / email', validators=[DataRequired(), userExistCheck])
-    password = PasswordField('Password', validators=[DataRequired()])
-    password_again = PasswordField('Repeat password', validators=[DataRequired(), passwordCheck])
-    surname = StringField('Surname', validators=[DataRequired()])
-    name = StringField('Name', validators=[DataRequired()])
-    age = IntegerField('Age', validators=[DataRequired()])
-    position = StringField('Position', validators=[DataRequired()])
-    speciality = StringField('Speciality', validators=[DataRequired()])
-    address = StringField('Address', validators=[DataRequired()])
-    submit = SubmitField('Submit')
+    name = StringField('Как к вам обращаться?', validators=[DataRequired("Необходимо заполнить")])
+    email = EmailField('Ваш email', validators=[DataRequired("Необходимо заполнить"), userExistCheck])
+    password = PasswordField('Пароль', validators=[DataRequired("Необходимо заполнить")])
+    password_again = PasswordField('Повторите пароль', validators=[DataRequired("Необходимо заполнить"), passwordCheck])
+    submit = SubmitField('Зарегестрироваться')
 

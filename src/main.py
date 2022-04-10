@@ -15,8 +15,8 @@ from data.ingredients import Ingredient, association_table as IngredientRecipe
 from data.categories import Category
 # from forms.departments import DepartmentForm
 # from forms.job import JobForm
-# from forms.login import LoginForm
-# from forms.register import RegisterForm
+from forms.login import LoginForm
+from forms.register import RegisterForm
 
 app = Flask(__name__)
 api = Api(app)
@@ -36,7 +36,7 @@ def main():
     # api.add_resource(users_resource.UsersListResource, '/api/v2/users')
     # api.add_resource(users_resource.UsersResource, '/api/v2/users/<int:user_id>')
     if __name__ == '__main__':
-        app.run()
+        app.run(debug=True)
 
 
 @app.route("/")
@@ -45,6 +45,8 @@ def index():
     categories = request.args.get("categories", None)
     ingredientsAdd = request.args.get("ingredientsAdd", None)
     ingredientsRemove = request.args.get("ingredientsRemove", None)
+    usersAdd = request.args.get("usersAdd", None)
+    usersRemove = request.args.get("usersRemove", None)
     page = int(request.args.get("page", 0))
 
     session = db_session.create_session()
@@ -55,6 +57,7 @@ def index():
         recipesQuery = recipesQuery.filter(Recipe.categories.any(Category.id.in_(categories)))
     else:
         categories = []
+
     if (ingredientsAdd):
         ingredientsAdd = list(map(int, ingredientsAdd.split("-")))
         # recipesQuery = recipesQuery.filter(Recipe.ingredients.any(Ingredient.id.in_(ingredientsAdd)))
@@ -67,6 +70,17 @@ def index():
         recipesQuery = recipesQuery.filter(~Recipe.ingredients.any(Ingredient.id.in_(ingredientsRemove)))
     else:
         ingredientsRemove = []
+
+    if (usersAdd):
+        usersAdd = list(map(int, usersAdd.split("-")))
+        recipesQuery = recipesQuery.filter(Recipe.creator.in_(usersAdd))
+    else:
+        usersAdd = []
+    if (usersRemove):
+        usersRemove = list(map(int, usersRemove.split("-")))
+        recipesQuery = recipesQuery.filter(Recipe.creator.not_in(usersRemove))
+    else:
+        usersRemove = []
     if (title):
         recipesQuery = recipesQuery.filter(func.lower(Recipe.title).contains(func.lower(title)))
     else:
@@ -82,6 +96,13 @@ def index():
 
     ingredients = session.query(Ingredient).order_by(Ingredient.title).all()
     categoriesAll = session.query(Category).order_by(Category.title).all()
+    users = session.query(User).order_by(User.name).all()
+    if (current_user.is_authenticated):
+        for i, user in enumerate(users):
+            if (user.id == current_user.id):
+                break
+        user = users.pop(i)
+        users.insert(0, user)
     data = {
         "title": title,
         "recipes": recipes,
@@ -90,10 +111,13 @@ def index():
         "search_categories": categories,
         "search_ingredientsAdd": ingredientsAdd,
         "search_ingredientsRemove": ingredientsRemove,
+        "search_usersAdd": usersAdd,
+        "search_usersRemove": usersRemove,
         "search_title": title,
         "count": count,
         "pageCount": pageCount,
         "page": page,
+        "users": users,
     }
     return render_template("index.html", **data)
 
@@ -103,52 +127,48 @@ def about():
     return render_template("about.html", title="О")
 
 
-# @app.route("/register", methods=['GET', 'POST'])
-# def register():
-#     form = RegisterForm()
-#     if form.validate_on_submit():
-#         user = User(
-#             surname=form.surname.data,
-#             name=form.name.data,
-#             age=form.age.data,
-#             position=form.position.data,
-#             speciality=form.speciality.data,
-#             address=form.address.data,
-#             email=form.email.data,
-#         )
-#         user.set_password(form.password.data)
-#         db_sess = db_session.create_session()
-#         db_sess.add(user)
-#         db_sess.commit()
-#         return redirect('/register_success')
-#     return render_template('editForm.html', title='Registration', form=form)
+@app.route("/register", methods=['GET', 'POST'])
+def register():
+    form = RegisterForm()
+    if form.validate_on_submit():
+        user = User(
+            name=form.name.data,
+            email=form.email.data,
+        )
+        user.set_password(form.password.data)
+        db_sess = db_session.create_session()
+        db_sess.add(user)
+        db_sess.commit()
+        login_user(user, remember=False)
+        return redirect('/register_success')
+    return render_template('editForm.html', title='Регистрация', form=form)
 
 
-# @app.route("/register_success")
-# def register_success():
-#     return render_template('/register_success.html', title='Registration')
+@app.route("/register_success")
+def register_success():
+    return render_template('/register_success.html', title='Регистрация')
 
 
-# @app.route('/login', methods=['GET', 'POST'])
-# def login():
-#     form = LoginForm()
-#     if form.validate_on_submit():
-#         db_sess = db_session.create_session()
-#         user = db_sess.query(User).filter(User.email == form.email.data).first()
-#         if user and user.check_password(form.password.data):
-#             login_user(user, remember=form.remember_me.data)
-#             return redirect("/")
-#         return render_template('login.html', title='Авторизация',
-#                                message="Неправильный логин или пароль",
-#                                form=form)
-#     return render_template('login.html', title='Авторизация', form=form)
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        user = db_sess.query(User).filter(User.email == form.email.data).first()
+        if user and user.check_password(form.password.data):
+            login_user(user, remember=form.remember_me.data)
+            return redirect("/")
+        return render_template('login.html', title='Авторизация',
+                               message="Неправильный логин или пароль",
+                               form=form)
+    return render_template('login.html', title='Авторизация', form=form)
 
 
-# @app.route('/logout')
-# @login_required
-# def logout():
-#     logout_user()
-#     return redirect("/")
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect("/")
 
 
 # @app.route("/addjob", methods=['GET', 'POST'])

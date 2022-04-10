@@ -43,13 +43,33 @@
         <div style="max-height: 11.5em; overflow: auto;" class="ps-1 fs-5">
             {% for ingredient in ingredients %}
             <div>
-                <input type="checkbox" id="{{'inp-add-' + ingredient.id|string}}" class="input-add fs-4"
+                <input type="checkbox" id="{{'inp-ingredient-add-' + ingredient.id|string}}" class="input-add fs-4"
                 {% if ingredient.id in search_ingredientsAdd %} checked {% endif %}
                 >
-                <label class="form-check-label" for="{{'inp-add-' + ingredient.id|string}}">{{ingredient.title}}</label>
+                <label class="form-check-label" for="{{'inp-ingredient-add-' + ingredient.id|string}}">{{ingredient.title}}</label>
                 <label class="ps-4 float-end me-2">
-                <input type="checkbox" id="{{'inp-remove-' + ingredient.id|string}}" class="input-remove fs-4"
+                <input type="checkbox" id="{{'inp-ingredient-remove-' + ingredient.id|string}}" class="input-remove fs-4"
                 {% if ingredient.id in search_ingredientsRemove %} checked {% endif %}
+                >
+                </label>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <h4>Авторы <span class="badge bg-success" id="badge-users-add"></span> <span class="badge bg-warning" id="badge-users-remove"></span></h4>
+        <div style="max-height: 11.5em; overflow: auto;" class="ps-1 fs-5">
+            {% for user in users %}
+            <div>
+                <input type="checkbox" id="{{'inp-users-add-' + user.id|string}}" class="input-add fs-4"
+                {% if user.id in search_usersAdd %} checked {% endif %}
+                >
+                <label class="form-check-label" for="{{'inp-users-add-' + user.id|string}}">{{user.name}}</label>
+                <label class="ps-4 float-end me-2">
+                <input type="checkbox" id="{{'inp-users-remove-' + user.id|string}}" class="input-remove fs-4"
+                {% if user.id in search_usersRemove %} checked {% endif %}
                 >
                 </label>
             </div>
@@ -117,14 +137,11 @@
                     <div class="col-auto">
                         <h1>{{recipe.title}}</h1>
                     </div>
-                    <!-- {% if current_user.is_authenticated and (job.team_leader == current_user.id or current_user.id == 1) %}
-                <div class="col-auto">
-                    <a class="btn btn-warning" href="./editjob/{{job.id}}" role="button">Edit</a>
                 </div>
-                <div class="col-auto">
-                    <a class="btn btn-danger" href="./deletejob/{{job.id}}" role="button">Delete</a>
-                </div>
-                {% endif %} -->
+                <div class="row overflow-auto">
+                    <div class="col">
+                        <div class="badge bg-secondary">Автор: {{recipe.creatorUser.name}}</div>
+                    </div>
                 </div>
                 <div class="row overflow-auto">
                     {% for category in recipe.categories %}

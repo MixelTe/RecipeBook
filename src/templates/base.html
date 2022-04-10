@@ -19,19 +19,23 @@
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav me-auto">
                     {% if current_user.is_authenticated %}
-                    <a class="nav-link" href="./departments">Добавить рецепт</a>
+                    <a class="nav-link" href="./editRecipe">Добавить рецепт</a>
                     {% endif %}
                 </div>
                 <div class="navbar-nav">
                     {% if current_user.is_authenticated %}
-                    <div class="nav-item dropdown">
-                        <a class="nav-link" href="#" id="navbar-dropdown-user" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            {{ current_user.name }} {{ current_user.surname }}
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbar-dropdown-user">
-                            <li><a class="dropdown-item" href="/editUser">Личный кабинет</a></li>
-                            <li><a class="dropdown-item" href="/logout">Выйти</a></li>
+                    <div class="nav-item dropdown d-none d-sm-block">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                            {{ current_user.name }}
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton1">
+                          <li><a class="dropdown-item" href="/editUser">Личный кабинет</a></li>
+                          <li><a class="dropdown-item" href="/logout">Выйти</a></li>
                         </ul>
+                    </div>
+                    <div class="nav-item d-sm-none">
+                        <a class="nav-link" href="/editUser">Личный кабинет</a>
+                        <a class="nav-link text-danger" href="/logout">Выйти</a>
                     </div>
                     {% else %}
                     <div class="nav-item dropdown d-none d-sm-block">
@@ -58,6 +62,9 @@
             <ul class="nav">
                 <a class="nav-link" href="/">Поиск рецепта</a>
                 <a class="nav-link" href="/about">О</a>
+                {% if current_user.is_authenticated %}
+                <a class="nav-link" href="./editRecipe">Добавить рецепт</a>
+                {% endif %}
             </ul>
         </div>
     </footer>
