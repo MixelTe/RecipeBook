@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 import math
 from flask import Flask, abort, jsonify, make_response, redirect, render_template, request
 from flask_restful import Api
@@ -17,6 +18,23 @@ from data.categories import Category
 # from forms.job import JobForm
 from forms.login import LoginForm
 from forms.register import RegisterForm
+import logging
+
+
+def customTime(*args):
+    utc_dt = datetime.utcnow()
+    utc_dt += timedelta(hours=3)
+    return utc_dt.timetuple()
+
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    filename='RecipeBook.log',
+    format='%(asctime)s %(levelname)-8s %(name)s     %(message)s',
+    encoding="utf-8"
+)
+logging.getLogger("werkzeug").disabled = True
+logging.Formatter.converter = customTime
 
 app = Flask(__name__)
 api = Api(app)
@@ -136,6 +154,7 @@ def register():
             email=form.email.data,
         )
         user.set_password(form.password.data)
+        logging.info(f"Added user: {user.name} {user.email}")
         db_sess = db_session.create_session()
         db_sess.add(user)
         db_sess.commit()

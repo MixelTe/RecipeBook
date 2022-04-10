@@ -17,8 +17,8 @@ def userExistCheck(form, field):
 
 
 class RegisterForm(FlaskForm):
-    name = StringField('Как к вам обращаться?', validators=[DataRequired("Необходимо заполнить")])
-    email = EmailField('Ваш email', validators=[DataRequired("Необходимо заполнить"), userExistCheck])
+    name = StringField('Имя', validators=[DataRequired("Необходимо заполнить")])
+    email = EmailField('Email', validators=[DataRequired("Необходимо заполнить"), userExistCheck])
     password = PasswordField('Пароль', validators=[DataRequired("Необходимо заполнить")])
     password_again = PasswordField('Повторите пароль', validators=[DataRequired("Необходимо заполнить"), passwordCheck])
     submit = SubmitField('Зарегестрироваться')
