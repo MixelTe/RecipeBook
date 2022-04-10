@@ -2,6 +2,7 @@
 
 {% block head %}
 <link href="{{url_for('static', filename='css/recipe.css')}}" rel="stylesheet">
+<script src="{{url_for('static', filename='scripts/marked.min.js')}}"></script>
 {% endblock %}
 
 {% block content %}
@@ -20,6 +21,17 @@
             </div>
         </div>
     </div>
+    {% if recipe.categories|length > 0 %}
+    <div class="row justify-content-center">
+        <div class="col col-lg-10">
+            <h4>Категории:
+                {% for category in recipe.categories %}
+                <span class="badge bg-success" id="badge-users-remove">{{category.title}}</span>
+                {% endfor %}
+            </h4>
+        </div>
+    </div>
+    {% endif %}
     <div class="row justify-content-center">
         <div class="col col-lg-10">
             <dl class="row">
@@ -30,10 +42,25 @@
             </dl>
         </div>
     </div>
-    <div class="row justify-content-center">
+    <div class="row justify-content-center mb-4">
         <div class="col col-lg-10">
-            <p class="fs-3">{{recipe.description}}</p>
+            <div id="description"></div>
+            <template id="description-raw">{{recipe.description}}</template>
+            <script>
+                const template = document.getElementById('description-raw');
+                const description = document.getElementById('description');
+                description.innerHTML = marked.parse(template.content.textContent);
+            </script>
+            <!-- <p class="fs-3">{{recipe.description}}</p> -->
         </div>
     </div>
+    {% if current_user.is_authenticated and current_user.id == recipe.creator %}
+    <div class="row mb-4">
+        <div class="col text-center">
+            <a href="/editRecipe/{{recipe.id}}" class="btn btn-primary">Редактировать рецепт</a>
+            <a href="/deleteRecipe/{{recipe.id}}" class="btn btn-danger">Удалить рецепт</a>
+        </div>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}

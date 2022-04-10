@@ -341,6 +341,8 @@ def not_found(error):
 @app.errorhandler(500)
 @app.errorhandler(Exception)
 def internal_server_error(error):
+    print(error)
+    logging.error(error)
     if (request.path.startswith("/api/")):
         return make_response(jsonify({'error': 'Internal Server Error'}), 500)
     else:
