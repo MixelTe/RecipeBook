@@ -1,6 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import PasswordField, StringField, SubmitField, ValidationError
-import wtforms
+from wtforms import PasswordField, StringField, SubmitField, EmailField, ValidationError
 from wtforms.validators import DataRequired
 from data import db_session
 from data.users import User
@@ -19,7 +18,7 @@ def userExistCheck(form, field):
 
 class RegisterForm(FlaskForm):
     name = StringField('Как к вам обращаться?', validators=[DataRequired("Необходимо заполнить")])
-    email = wtforms.EmailField('Ваш email', validators=[DataRequired("Необходимо заполнить"), userExistCheck])
+    email = EmailField('Ваш email', validators=[DataRequired("Необходимо заполнить"), userExistCheck])
     password = PasswordField('Пароль', validators=[DataRequired("Необходимо заполнить")])
     password_again = PasswordField('Повторите пароль', validators=[DataRequired("Необходимо заполнить"), passwordCheck])
     submit = SubmitField('Зарегестрироваться')
