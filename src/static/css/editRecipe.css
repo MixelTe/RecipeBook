@@ -1,0 +1,44 @@
+.img-container {
+    overflow: overlay;
+    max-height: 50vh;
+    display: flex;
+    border-radius: 1em;
+    width: auto;
+    justify-content: center;
+}
+.img-container > div {
+    display: block;
+    height: auto;
+    width: auto;
+    position: relative;
+}
+
+.img-container img {
+    height: 100%;
+    width: auto;
+}
+.img-container button {
+    position: absolute;
+    right: 1em;
+    top: 1em;
+}
+
+.img-container::-webkit-scrollbar {
+    height: 0.7em;
+}
+/* .img-container::-webkit-scrollbar-track {
+} */
+.img-container::-webkit-scrollbar-thumb {
+    background-color: lightgrey;
+    outline: 2px solid slategrey;
+    border-radius: 1em;
+}
+
+#inp-img {
+    position: fixed;
+    opacity: 0;
+    left: -1000px;
+}
+#inp-img:focus ~ span {
+    box-shadow:0 0 0 .25rem rgba(25,135,84,.25)
+}
