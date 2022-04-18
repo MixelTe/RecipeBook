@@ -216,7 +216,7 @@ def editRecipe(id):
     if (recipe.creator != current_user.id):
         return render_template("error.html", title="404", text="Рецепт не найден!"), 404
     ingredients = session.execute("""
-        select i.title, ri.count
+        select i.title, ri.count, i.id
         from RecipesIngredients as ri
         join Ingredients as i on i.id = ri.ingredient
         where ri.recipe = :recipe

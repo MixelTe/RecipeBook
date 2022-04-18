@@ -20,9 +20,9 @@
         <div class="col d-flex justify-content-center">
             <div class="img-container" id="img-container">
                 {% for picture in recipe.pictures %}
-                <div>
-                    <img src="{{url_for('static', filename='images/' + picture.title)}}" class="img-fluid">
-                    <button class="btn btn-danger float-end">-</button>
+                <div class="flex-shrink-0">
+                    <img src="{{url_for('static', filename='images/' + picture.title)}}" id="{{picture.id}}">
+                    <button class="btn btn-danger float-end">Удалить</button>
                 </div>
                 {% endfor %}
             </div>
@@ -39,19 +39,21 @@
     <div class="row justify-content-center mb-4">
         <div class="col col-lg-10">
             <h4>Категории:</h4>
+            <span id="container-category">
             {% for category in recipe.categories %}
-                <span class="badge bg-secondary fs-6" id="">
-                    {{category.title}}
+                <span class="badge bg-secondary fs-6" id="{{category.id}}">
+                    <span>{{category.title}}</span>
                     <button class="btn btn-danger">-</button>
                 </span>
             {% endfor %}
+            </span>
         </div>
     </div>
     <div class="row justify-content-center mb-4">
         <div class="col-12 col-md-7 col-lg-6 mb-2">
             <div>
                 <input type="text" list="category-suggestions" placeholder="Категория" id="inp-category">
-                <button class="btn btn-success">Добавить</button>
+                <button class="btn btn-success" id="btn-category">Добавить</button>
                 <datalist id="category-suggestions">
                     <optgroup>
                     {% for category in categoriesAll %}
@@ -67,12 +69,13 @@
     </div>
     <div class="row justify-content-center">
         <div class="col col-lg-10">
-            <dl class="row">
+            <dl class="row" id="container-ingredient">
                 {% for ingredient in ingredients %}
                 <dt class="col-sm-3">{{ingredient[0]}}</dt>
                 <dd class="col-sm-9">
                     <input type="text" value="{{ingredient[1]}}" class="w-75">
                     <button class="btn btn-danger float-end">-</button>
+                    <span class="d-none">{{ingredient[2]}}</span>
                 </dd>
                 {% endfor %}
             </dl>
@@ -82,7 +85,7 @@
         <div class="col-12 col-md-7 col-lg-6 mb-2">
             <div>
                 <input type="text" list="ingredient-suggestions" placeholder="Ингредиент" id="inp-ingredient">
-                <button class="btn btn-success">Добавить</button>
+                <button class="btn btn-success" id="btn-ingredient">Добавить</button>
                 <datalist id="ingredient-suggestions">
                     <optgroup>
                     {% for ingredient in ingredientsAll %}
@@ -104,7 +107,7 @@
     <div class="row justify-content-center mb-4">
         <div class="col col-lg-10 d-flex justify-content-between">
             <button class="btn btn-warning">Отмена</button>
-            <button type="submit" class="btn btn-success">Сохранить</button>
+            <button id="btn-submit" class="btn btn-success">Сохранить</button>
         </div>
     </div>
 </div>
@@ -119,4 +122,21 @@
 
     editor.render();
 </script>
+<div class="modal" tabindex="-1" id="modal">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modal-title">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <!-- <div class="modal-body">
+          <p>Modal body text goes here.</p>
+        </div> -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+          <button type="button" class="btn btn-primary" id="btn-modal-ok">ОК</button>
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock %}

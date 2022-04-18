@@ -11,6 +11,7 @@
     height: auto;
     width: auto;
     position: relative;
+    flex-shrink: 0;
 }
 
 .img-container img {
@@ -21,6 +22,13 @@
     position: absolute;
     right: 1em;
     top: 1em;
+    left: 1em;
+    bottom: 1em;
+    opacity: 40%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10 l8 0'/%3e%3c/svg%3e");
 }
 
 .img-container::-webkit-scrollbar {
