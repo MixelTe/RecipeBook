@@ -16,8 +16,8 @@
             <input type="text" value="{{recipe.title}}" class="form-control" id="inp-title">
         </div>
     </div>
-    <div class="row mb-4">
-        <div class="col d-flex justify-content-center">
+    <div class="row justify-content-center mb-4">
+        <div class="col col-lg-10 d-flex ">
             <div class="img-container" id="img-container">
                 {% for picture in recipe.pictures %}
                 <div class="flex-shrink-0">
@@ -69,13 +69,13 @@
     </div>
     <div class="row justify-content-center">
         <div class="col col-lg-10">
+            <h4>Ингредиенты и их количество:</h4>
             <dl class="row" id="container-ingredient">
                 {% for ingredient in ingredients %}
-                <dt class="col-sm-3">{{ingredient[0]}}</dt>
+                <dt class="col-sm-3" id="{{ingredient[2]}}">{{ingredient[0]}}</dt>
                 <dd class="col-sm-9">
                     <input type="text" value="{{ingredient[1]}}" class="w-75">
                     <button class="btn btn-danger float-end">-</button>
-                    <span class="d-none">{{ingredient[2]}}</span>
                 </dd>
                 {% endfor %}
             </dl>
@@ -106,18 +106,15 @@
     </div>
     <div class="row justify-content-center mb-4">
         <div class="col col-lg-10 d-flex justify-content-between">
-            <button class="btn btn-warning">Отмена</button>
+            <a class="btn btn-warning" href="/recipe/{{recipe.id}}">Отмена</a>
             <button id="btn-submit" class="btn btn-success">Сохранить</button>
         </div>
     </div>
 </div>
 <script>
-    const toolbar = Editor.toolbar;
-    toolbar[10] = "|"
     var editor = new Editor({
         element: document.getElementById("textarea"),
         status: false,
-        toolbar: toolbar
     });
 
     editor.render();
@@ -138,5 +135,10 @@
         </div>
       </div>
     </div>
-  </div>
+</div>
+<div class="spinner" id="spinner">
+    <div>
+        <div class="spinner-border" style="width: 3rem; height: 3rem;"></div>
+    </div>
+</div>
 {% endblock %}

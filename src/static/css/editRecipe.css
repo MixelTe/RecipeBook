@@ -2,9 +2,6 @@
     overflow: overlay;
     max-height: 50vh;
     display: flex;
-    border-radius: 1em;
-    width: auto;
-    justify-content: center;
 }
 .img-container > div {
     display: block;
@@ -32,7 +29,7 @@
 }
 
 .img-container::-webkit-scrollbar {
-    height: 0.7em;
+    height: 0.9em;
 }
 /* .img-container::-webkit-scrollbar-track {
 } */
@@ -49,4 +46,20 @@
 }
 #inp-img:focus ~ span {
     box-shadow:0 0 0 .25rem rgba(25,135,84,.25)
+}
+
+.spinner {
+    display: none;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    justify-content: center;
+    align-items: center;
+    z-index: 99999;
+}
+.spinner-active {
+    display: flex;
 }

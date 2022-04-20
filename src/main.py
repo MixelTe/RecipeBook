@@ -234,6 +234,27 @@ def editRecipe(id):
     return render_template('/editRecipe.html', **data)
 
 
+@app.route("/api/editRecipe/<int:id>", methods=['POST'])
+@login_required
+def editRecipeApi(id):
+    session = db_session.create_session()
+    recipe: Recipe = session.query(Recipe).get(id)
+    if (not recipe):
+        return jsonify({"result": "Not Found"}), 404
+    if (recipe.creator != current_user.id):
+        return jsonify({"result": "Forbidden"}), 404
+
+    try:
+        data = request.json
+        recipe.title = data["title"]
+        recipe.description = data["description"]
+    except Exception as x:
+        return jsonify({"result": "Bad Request"}), 400
+    session.commit()
+
+    return jsonify({"result": "OK"}), 200
+
+
 # @app.route("/addjob", methods=['GET', 'POST'])
 # @login_required
 # def addjob():

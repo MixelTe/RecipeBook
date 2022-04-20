@@ -1,4 +1,6 @@
 // editor.codemirror.getValue()
+const urlSplited = window.location.href.split("/")
+const recipeId = urlSplited[urlSplited.length - 1];
 const btn_submit = document.getElementById("btn-submit");
 const inp_title = document.getElementById("inp-title");
 const img_container = document.getElementById("img-container");
@@ -7,6 +9,7 @@ const container_ingredient = document.getElementById("container-ingredient");
 const inp_img = document.getElementById("inp-img");
 const openModal = setModal();
 const modal_title = document.getElementById("modal-title");
+const spinner = document.getElementById("spinner");
 inp_title.focus();
 
 const onDelete_category = setInput("inp-category", "category-suggestions", "btn-category", getUsed_category, add_category);
@@ -46,27 +49,62 @@ inp_img.addEventListener("change", () =>
         btn.classList.add("float-end");
         btn.innerText = "-";
         const div = document.createElement("div");
+        const onload = () =>
+        {
+            img.removeEventListener("load", onload);
+            formatImg(img);
+            const preview = createPreviewImg(img);
+            preview.style.position = "fixed";
+            preview.style.left = "-3000px";
+            preview.style.top = "-3000px";
+            preview.style.width = "auto";
+            preview.style.height = "auto";
+            div.appendChild(preview);
+            img_container.appendChild(div);
+        }
+        img.addEventListener("load", onload);
         div.appendChild(img);
         div.appendChild(btn);
-        img_container.appendChild(div);
         btn.addEventListener("click", () => onImgDelete(div));
     }
 });
 
 btn_submit.addEventListener("click", () =>
 {
-    const data = new FormData()
-    data.append("title", inp_title.value)
+    btn_submit.disabled = true;
+    spinner.classList.add("spinner-active");
+    document.body.style.overflow = "hidden";
 
+    const imgs = [];
     for (let i = 0; i < img_container.children.length; i++)
     {
         const img = img_container.children[i].firstElementChild;
-        const formated = formatImg(img)
-        data.append("img", formated, img.id)
+        const preview = img_container.children[i].children[2];
+        const id = `${parseInt(img.id, 10) > 0 ? img.id : -i}`;
+        imgs.push({
+            id: id,
+            img: img.src,
+            preview: preview ? preview.src : null,
+        });
     }
 
-
-    console.log(data);
+    const data = {
+        title: inp_title.value,
+        imgs: imgs,
+        categories: getUsed_category().map(el => parseInt(el.id, 10)),
+        ingredients: getUsed_ingredient().map(el => { return { id: parseInt(el.id, 10), count: el.count } }),
+        description: editor.codemirror.getValue(),
+    };
+    fetch(`/api/editRecipe/${recipeId}`, {
+        method: 'POST',
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data),
+    }).finally(() =>
+    {
+        window.location.replace(`/recipe/${recipeId}`);
+    });
 });
 
 
@@ -95,7 +133,6 @@ function setInput(inpId, listId, btnId, getUsed, addNew)
     function setOptions()
     {
         const used = getUsed();
-        let empty = true;
         inp_ingredient_list.firstElementChild.innerHTML = "";
         for (let i = 0; i < options.length; i++)
         {
@@ -111,7 +148,6 @@ function setInput(inpId, listId, btnId, getUsed, addNew)
                 }
             }
             if (isUsed) continue;
-            empty = false;
             const option = document.createElement("option");
             option.innerText = data.title;
             inp_ingredient_list.firstElementChild.appendChild(option);
@@ -198,18 +234,29 @@ function setModal()
 
 function formatImg(img)
 {
-    const MAXSize = 1280
+    img.src = scaleImg(img, 1280);
+}
+function createPreviewImg(img)
+{
+    const preview = document.createElement("img");
+    preview.src = scaleImg(img, 200, true);
+    return preview;
+}
+function scaleImg(img, MAXSize, useMin=false)
+{
     const canvas = document.createElement("canvas");
-    const i = document.createElement("img");
-    let width = i.width
-    let height = i.height
+    let width = img.width
+    let height = img.height
     let maxSize = Math.max(width, height);
+    if (useMin) maxSize = Math.min(width, height);
     if (maxSize > MAXSize)
     {
         const c = MAXSize / maxSize;
         width *= c;
         height *= c;
     }
+    width = Math.round(width);
+    height = Math.round(height);
     canvas.width = width;
     canvas.height = height;
     const ctx = canvas.getContext("2d");
@@ -224,7 +271,7 @@ function getUsed_category()
     {
         const el = container_category.children[i];
         const text = el.firstElementChild;
-        used.push({title: cs(text.innerText), id: el.id});
+        used.push({ title: cs(text.innerText), id: el.id });
     }
     return used;
 }
@@ -233,9 +280,11 @@ function getUsed_ingredient()
     const used = []
     for (let i = 0; i < container_ingredient.children.length; i += 2)
     {
-        const el = container_ingredient.children[i];
-        used.push(cs(el.innerText));
+        const el1 = container_ingredient.children[i];
+        const el2 = container_ingredient.children[i + 1];
+        used.push({ title: cs(el1.innerText), id: el1.id, count: el2.firstElementChild.value });
     }
+    // console.log(used);
     return used;
 }
 function add_category(id, title)
@@ -259,8 +308,25 @@ function add_category(id, title)
 }
 function add_ingredient(id, title)
 {
-    console.log(id);
-    // btn.addEventListener("click", () => delete_ingredient(el1, el2));
+    const dt = document.createElement("dt");
+    dt.classList.add("col-sm-3");
+    dt.innerText = title;
+    dt.id = id;
+    const dd = document.createElement("dd");
+    dd.classList.add("col-sm-9");
+    const inp = document.createElement("input");
+    dd.appendChild(inp);
+    inp.classList.add("w-75");
+    inp.type = "text";
+    const btn = document.createElement("button");
+    dd.appendChild(btn);
+    btn.classList.add("btn");
+    btn.classList.add("btn-danger");
+    btn.classList.add("float-end");
+    btn.innerText = "-";
+    btn.addEventListener("click", () => delete_ingredient(dt, dd));
+    container_ingredient.appendChild(dt);
+    container_ingredient.appendChild(dd);
 }
 
 function cs(str)
