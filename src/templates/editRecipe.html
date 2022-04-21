@@ -106,7 +106,11 @@
     </div>
     <div class="row justify-content-center mb-4">
         <div class="col col-lg-10 d-flex justify-content-between">
+            {% if recipe.id == 0 %}
+            <a class="btn btn-warning" href="/">Отмена</a>
+            {% else %}
             <a class="btn btn-warning" href="/recipe/{{recipe.id}}">Отмена</a>
+            {% endif %}
             <button id="btn-submit" class="btn btn-success">Сохранить</button>
         </div>
     </div>

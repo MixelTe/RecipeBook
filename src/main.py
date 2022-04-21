@@ -212,11 +212,14 @@ def recipe(id):
 @login_required
 def editRecipe(id):
     session = db_session.create_session()
-    recipe = session.query(Recipe).get(id)
-    if (not recipe):
-        return render_template("error.html", title="404", text="Рецепт не найден"), 404
-    if (recipe.creator != current_user.id):
-        return render_template("error.html", title="404", text="Рецепт не найден!"), 404
+    if (id == 0):
+        recipe = Recipe(id=0, title="", description="")
+    else:
+        recipe = session.query(Recipe).get(id)
+        if (not recipe):
+            return render_template("error.html", title="404", text="Рецепт не найден"), 404
+        if (recipe.creator != current_user.id):
+            return render_template("error.html", title="404", text="Рецепт не найден!"), 404
     ingredients = session.execute("""
         select i.title, ri.count, i.id
         from RecipesIngredients as ri
@@ -227,7 +230,7 @@ def editRecipe(id):
     ingredientsAll = session.query(Ingredient).order_by(Ingredient.title).all()
     categoriesAll = session.query(Category).order_by(Category.title).all()
     data = {
-        "title": recipe.title,
+        "title": "Добавление рецепта" if (id == 0) else recipe.title,
         "recipe": recipe,
         "ingredients": ingredients,
         "ingredientsAll": ingredientsAll,
@@ -240,11 +243,15 @@ def editRecipe(id):
 @login_required
 def editRecipeApi(id):
     session = db_session.create_session()
-    recipe: Recipe = session.query(Recipe).get(id)
-    if (not recipe):
-        return jsonify({"result": "Not Found"}), 404
-    if (recipe.creator != current_user.id):
-        return jsonify({"result": "Forbidden"}), 404
+    if (id == 0):
+        recipe = Recipe(creator=current_user.id)
+        session.add(recipe)
+    else:
+        recipe: Recipe = session.query(Recipe).get(id)
+        if (not recipe):
+            return jsonify({"result": "Not Found"}), 404
+        if (recipe.creator != current_user.id):
+            return jsonify({"result": "Forbidden"}), 404
 
     try:
         data = request.json
@@ -271,7 +278,7 @@ def editRecipeApi(id):
         return jsonify({"result": "Bad Request"}), 400
     session.commit()
 
-    return jsonify({"result": "OK"}), 200
+    return jsonify({"result": "OK", "id": recipe.id}), 200
 
 
 @app.route("/img/<int:id>")
@@ -289,130 +296,6 @@ def img(id):
         response.headers.set('Cache-Control', 'public,max-age=31536000,immutable')
         return response
     abort(404)
-
-
-# @app.route("/addjob", methods=['GET', 'POST'])
-# @login_required
-# def addjob():
-#     form = JobForm().init()
-#     if form.validate_on_submit():
-#         job = Jobs(
-#             job=form.job.data,
-#             team_leader=form.team_leader.data,
-#             work_size=form.work_size.data,
-#             collaborators=",".join(map(str, form.collaborators.data)),
-#             start_date=form.start_date.data,
-#             end_date=form.end_date.data,
-#             is_finished=form.is_finished.data,
-#         )
-#         db_sess = db_session.create_session()
-#         db_sess.add(job)
-#         db_sess.commit()
-#         return redirect('/')
-#     return render_template('editForm.html', title='Adding a Job', form=form)
-
-
-# @app.route("/editjob/<int:id>", methods=['GET', 'POST'])
-# @login_required
-# def editjob(id):
-#     form = JobForm().init()
-#     db_sess = db_session.create_session()
-#     job = db_sess.query(Jobs).filter(Jobs.id == id, (Jobs.team_leader == current_user.id) | (current_user.id == 1)).first()
-#     if (not job):
-#         abort(404)
-#     if request.method == "GET":
-#         form.job.data = job.job
-#         form.team_leader.data = job.team_leader
-#         form.work_size.data = job.work_size
-#         form.collaborators.data = list(map(int, job.collaborators.split(",")))
-#         form.start_date.data = job.start_date
-#         form.end_date.data = job.end_date
-#         form.is_finished.data = job.is_finished
-#     if form.validate_on_submit():
-#         job.job = form.job.data
-#         job.team_leader = form.team_leader.data
-#         job.work_size = form.work_size.data
-#         job.collaborators = ",".join(map(str, form.collaborators.data))
-#         job.start_date = form.start_date.data
-#         job.end_date = form.end_date.data
-#         job.is_finished = form.is_finished.data
-#         db_sess.commit()
-#         return redirect('/')
-#     return render_template('editForm.html', title='Editing a Job', form=form)
-
-
-# @app.route('/deletejob/<int:id>')
-# @login_required
-# def news_delete(id):
-#     db_sess = db_session.create_session()
-#     job = db_sess.query(Jobs).filter(Jobs.id == id, (Jobs.team_leader == current_user.id) | (current_user.id == 1)).first()
-#     if job:
-#         db_sess.delete(job)
-#         db_sess.commit()
-#     else:
-#         abort(404)
-#     return redirect('/')
-
-
-# @app.route("/departments")
-# def departments():
-#     session = db_session.create_session()
-#     departments = session.query(Department).all()
-#     return render_template("departments.html", title="List of Departments", departments=departments)
-
-
-# @app.route("/add_department", methods=['GET', 'POST'])
-# @login_required
-# def add_departments():
-#     form = DepartmentForm().init()
-#     if form.validate_on_submit():
-#         department = Department(
-#             title=form.title.data,
-#             chief=form.chief.data,
-#             members=",".join(map(str, form.members.data)),
-#             email=form.email.data,
-#         )
-#         db_sess = db_session.create_session()
-#         db_sess.add(department)
-#         db_sess.commit()
-#         return redirect('/departments')
-#     return render_template('editForm.html', title='Adding a Department', form=form)
-
-
-# @app.route("/edit_department/<int:id>", methods=['GET', 'POST'])
-# @login_required
-# def edit_departments(id):
-#     form = DepartmentForm().init()
-#     db_sess = db_session.create_session()
-#     department = db_sess.query(Department).filter(Department.id == id, (Department.chief == current_user.id) | (current_user.id == 1)).first()
-#     if (not department):
-#         abort(404)
-#     if request.method == "GET":
-#         form.title.data = department.title
-#         form.chief.data = department.chief
-#         form.members.data = list(map(int, department.members.split(",")))
-#         form.email.data = department.email
-#     if form.validate_on_submit():
-#         department.title = form.title.data
-#         department.chief = form.chief.data
-#         department.email = form.email.data
-#         department.members = ",".join(map(str, form.members.data))
-#         db_sess.commit()
-#         return redirect('/departments')
-#     return render_template('editForm.html', title='Editing a Department', form=form)
-
-
-# @app.route('/delete_department/<int:id>')
-# @login_required
-# def delete_departments(id):
-#     db_sess = db_session.create_session()
-#     department = db_sess.query(Department).filter(Department.id == id, (Department.chief == current_user.id) | (current_user.id == 1)).first()
-#     if department:
-#         db_sess.delete(department)
-#         db_sess.commit()
-#     else:
-#         abort(404)
-#     return redirect('/departments')
 
 
 @app.errorhandler(404)

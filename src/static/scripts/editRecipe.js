@@ -101,10 +101,22 @@ btn_submit.addEventListener("click", () =>
             "Content-Type": "application/json"
         },
         body: JSON.stringify(data),
-    }).finally(() =>
+    }).then(async v =>
     {
-        window.location.replace(`/recipe/${recipeId}`);
-    });
+        try
+        {
+            const json = await v.json();
+            window.location.replace(`/recipe/${json.id}`);
+        }
+        catch
+        {
+            window.location.replace(`/recipe/${recipeId}`);
+        }
+    }, r =>
+    {
+        if (`${recipeId}` == "0") window.location.replace(`/`);
+        else window.location.replace(`/recipe/${recipeId}`);
+    })
 });
 
 

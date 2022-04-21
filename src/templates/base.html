@@ -19,7 +19,7 @@
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav me-auto">
                     {% if current_user.is_authenticated %}
-                    <a class="nav-link" href="./editRecipe">Добавить рецепт</a>
+                    <a class="nav-link" href="/editRecipe/0">Добавить рецепт</a>
                     {% endif %}
                 </div>
                 <div class="navbar-nav">
@@ -63,7 +63,7 @@
                 <a class="nav-link" href="/">Поиск рецепта</a>
                 <a class="nav-link" href="/about">О</a>
                 {% if current_user.is_authenticated %}
-                <a class="nav-link" href="./editRecipe">Добавить рецепт</a>
+                <a class="nav-link" href="/editRecipe/0">Добавить рецепт</a>
                 {% endif %}
             </ul>
         </div>
