@@ -6,6 +6,7 @@ from flask_login import LoginManager, current_user, login_required, login_user, 
 from flask_jwt_simple import JWTManager
 from sqlalchemy import func
 from data import db_session
+from data.pictures import Picture
 # from api import jobs_api
 # from api import users_api
 # from api import login_api
@@ -19,6 +20,7 @@ from data.categories import Category
 from forms.login import LoginForm
 from forms.register import RegisterForm
 import logging
+import base64
 
 
 def customTime(*args):
@@ -248,11 +250,38 @@ def editRecipeApi(id):
         data = request.json
         recipe.title = data["title"]
         recipe.description = data["description"]
+        for img in recipe.pictures:
+            found = False
+            for im in data["imgs"]:
+                if (img.id == im["id"]):
+                    found = True
+                    break
+            if (not found):
+                recipe.pictures.remove(img)
+        for img in data["imgs"]:
+            if (int(img["id"]) < 0):
+                picture = Picture()
+                picture.img = base64.b64decode(img["img"].split(',')[1] + '==')
+                if (img["preview"]):
+                    picture.preview = base64.b64decode(img["preview"].split(',')[1] + '==')
+                recipe.pictures.append(picture)
     except Exception as x:
         return jsonify({"result": "Bad Request"}), 400
     session.commit()
 
     return jsonify({"result": "OK"}), 200
+
+
+@app.route("/img/<int:id>")
+def img(id):
+    session = db_session.create_session()
+    picture: Picture = session.query(Picture).get(id)
+    if (picture):
+        response = make_response(picture.img)
+        response.headers.set('Content-Type', 'image/png')
+        response.headers.set('Content-Disposition', 'attachment', filename=f'{id}.jpg')
+        return response
+    abort(404)
 
 
 # @app.route("/addjob", methods=['GET', 'POST'])

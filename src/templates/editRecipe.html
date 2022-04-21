@@ -21,7 +21,7 @@
             <div class="img-container" id="img-container">
                 {% for picture in recipe.pictures %}
                 <div class="flex-shrink-0">
-                    <img src="{{url_for('static', filename='images/' + picture.title)}}" id="{{picture.id}}">
+                    <img src="{{'/img/' + picture.id|string)}}" id="{{picture.id}}">
                     <button class="btn btn-danger float-end">Удалить</button>
                 </div>
                 {% endfor %}

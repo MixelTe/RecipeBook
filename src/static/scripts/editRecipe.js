@@ -80,7 +80,7 @@ btn_submit.addEventListener("click", () =>
     {
         const img = img_container.children[i].firstElementChild;
         const preview = img_container.children[i].children[2];
-        const id = `${parseInt(img.id, 10) > 0 ? img.id : -i}`;
+        const id = `${parseInt(img.id, 10) > 0 ? img.id : -(i + 1)}`;
         imgs.push({
             id: id,
             img: img.src,
