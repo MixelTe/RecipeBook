@@ -71,6 +71,10 @@ def index():
 
     session = db_session.create_session()
     recipesQuery = session.query(Recipe)
+    if (current_user.is_authenticated and current_user.id == 1 and request.args.get("d") is not None):
+        recipesQuery = recipesQuery.filter(Recipe.deleted == True)
+    else:
+        recipesQuery = recipesQuery.filter(Recipe.deleted == False)
 
     if (categories):
         categories = list(map(int, categories.split("-")))
@@ -296,6 +300,22 @@ def img(id):
         response.headers.set('Cache-Control', 'public,max-age=31536000,immutable')
         return response
     abort(404)
+
+
+@app.route("/api/deleteRecipe/<int:id>", methods=['POST'])
+@login_required
+def deleteRecipeApi(id):
+    session = db_session.create_session()
+    recipe: Recipe = session.query(Recipe).get(id)
+    if (not recipe):
+        return jsonify({"result": "Not Found"}), 404
+    if (recipe.creator != current_user.id):
+        return jsonify({"result": "Forbidden"}), 404
+
+    recipe.deleted = True
+    session.commit()
+
+    return jsonify({"result": "OK"}), 200
 
 
 @app.errorhandler(404)
