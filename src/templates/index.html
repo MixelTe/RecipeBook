@@ -126,7 +126,7 @@
             <div class="img-container">
             <a href="/recipe/{{recipe.id}}">
             {% if recipe.pictures[0] %}
-            <img src="{{'/img/' + recipe.pictures[0].id|string}}" class="img-fluid" alt="...">
+            <img src="{{'/img/' + recipe.pictures[0].id|string + '?p'}}" class="img-fluid" alt="...">
             {% else %}
             <img src="{{url_for('static', filename='images/rice-bowl.png')}}" class="img-fluid img-thumbnail" alt="...">
             {% endif %}

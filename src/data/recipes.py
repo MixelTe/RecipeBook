@@ -11,6 +11,7 @@ class Recipe(SqlAlchemyBase, SerializerMixin):
     creator = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("Users.id"))
     title = sqlalchemy.Column(sqlalchemy.String)
     description = sqlalchemy.Column(sqlalchemy.String)
+    deleted = sqlalchemy.Column(sqlalchemy.Boolean, default=False)
 
     creatorUser = orm.relation('User')
     categories = orm.relation("Category", secondary="RecipesCategories")

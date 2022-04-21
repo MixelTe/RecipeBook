@@ -52,8 +52,8 @@ inp_img.addEventListener("change", () =>
         const onload = () =>
         {
             img.removeEventListener("load", onload);
-            formatImg(img);
             const preview = createPreviewImg(img);
+            formatImg(img);
             preview.style.position = "fixed";
             preview.style.left = "-3000px";
             preview.style.top = "-3000px";

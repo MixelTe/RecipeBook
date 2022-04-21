@@ -250,14 +250,16 @@ def editRecipeApi(id):
         data = request.json
         recipe.title = data["title"]
         recipe.description = data["description"]
-        for img in recipe.pictures:
+        for i in range(len(recipe.pictures) - 1, -1, -1):
+            img = recipe.pictures[i]
             found = False
             for im in data["imgs"]:
-                if (img.id == im["id"]):
+                if (img.id == int(im["id"])):
                     found = True
                     break
             if (not found):
                 recipe.pictures.remove(img)
+                session.delete(img)
         for img in data["imgs"]:
             if (int(img["id"]) < 0):
                 picture = Picture()
@@ -277,9 +279,14 @@ def img(id):
     session = db_session.create_session()
     picture: Picture = session.query(Picture).get(id)
     if (picture):
-        response = make_response(picture.img)
+        p = request.args.get("p")
+        img = picture.img
+        if (p is not None and picture.preview):
+            img = picture.preview
+        response = make_response(img)
         response.headers.set('Content-Type', 'image/png')
-        response.headers.set('Content-Disposition', 'attachment', filename=f'{id}.jpg')
+        response.headers.set('Content-Disposition', 'inline', filename=f'recipe-img-{id}.jpg')
+        response.headers.set('Cache-Control', 'public,max-age=31536000,immutable')
         return response
     abort(404)
 
