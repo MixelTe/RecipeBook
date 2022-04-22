@@ -6,6 +6,7 @@ from flask_jwt_simple import JWTManager
 from data import db_session
 from blueprints.api import blueprint as blueprint_api
 from blueprints.pages import blueprint as blueprint_pages
+from blueprints.other import blueprint as blueprint_other
 from data.users import User
 import logging
 
@@ -38,6 +39,7 @@ def main():
     db_session.global_init("db/RecipeBook.db")
     app.register_blueprint(blueprint_api)
     app.register_blueprint(blueprint_pages)
+    app.register_blueprint(blueprint_other)
     # api.add_resource(users_resource.UsersListResource, '/api/v2/users')
     # api.add_resource(users_resource.UsersResource, '/api/v2/users/<int:user_id>')
     if __name__ == '__main__':
