@@ -199,6 +199,10 @@ function setInput(inpId, listId, btnId, getUsed, addNew)
         }
         inp_ingredient.value = "";
     });
+    inp_ingredient.addEventListener("keydown", e =>
+    {
+        if (e.key == "Enter") btn.click();
+    });
 
     function setOptions()
     {
@@ -442,6 +446,10 @@ editModal_btn.addEventListener("click", () =>
         li.innerText = value;
     }
     editModal_inp.value = "";
+});
+editModal_inp.addEventListener("keydown", e =>
+{
+    if (e.key == "Enter") editModal_btn.click();
 });
 
 
