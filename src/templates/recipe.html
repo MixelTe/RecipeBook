@@ -21,6 +21,13 @@
             </div>
         </div>
     </div>
+    {% if (not current_user.is_authenticated) or (current_user.id != recipe.creator) %}
+    <div class="row justify-content-center">
+        <div class="col col-lg-10">
+            <h4>Автор: <span class="badge bg-secondary" id="badge-users-remove">{{recipe.creatorUser.name}}</span></h4>
+        </div>
+    </div>
+    {% endif %}
     {% if recipe.categories|length > 0 %}
     <div class="row justify-content-center">
         <div class="col col-lg-10">

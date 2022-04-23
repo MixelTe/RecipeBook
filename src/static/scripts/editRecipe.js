@@ -350,6 +350,7 @@ function add_category(id, title)
     container.classList.add("badge");
     container.classList.add("bg-secondary");
     container.classList.add("fs-6");
+    container.classList.add("me-2");
     container.id = id;
     const text = document.createElement("span");
     container.appendChild(text);

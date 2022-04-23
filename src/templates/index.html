@@ -77,21 +77,6 @@
         </div>
     </div>
 </div>
-<!-- <div class="row">
-    <div class="col">
-        <h4>Исключить ингредиенты</h4>
-        <div style="max-height: 10em; overflow: auto;" class="ps-1">
-            {% for ingredient in ingredients %}
-            <div>
-                <input type="checkbox" id="{{'inp-remove-' + ingredient.id|string}}" class="form-check-input"
-                {% if ingredient.id in search_ingredientsRemove %} checked {% endif %}
-                >
-                <label class="form-check-label" for="{{'inp-remove-' + ingredient.id|string}}">{{ingredient.title}}</label>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-</div> -->
 <div class="row">
     <div class="col text-center">
         <button class="btn btn-primary m-2" id="btn-search" type="submit">Поиск</button>
@@ -146,11 +131,11 @@
                     </div>
                 </div>
                 <div class="row overflow-auto">
-                    {% for category in recipe.categories %}
                     <div class="col">
+                    {% for category in recipe.categories %}
                         <div class="badge bg-success">{{category.title}}</div>
+                        {% endfor %}
                     </div>
-                    {% endfor %}
                 </div>
                 <div class="row overflow-auto">
                     <div class="col">{% for ingredient in recipe.ingredients %}
