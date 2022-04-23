@@ -31,7 +31,7 @@ def index():
     page = int(request.args.get("page", 0))
 
     session = db_session.create_session()
-    recipesQuery = session.query(Recipe)
+    recipesQuery = session.query(Recipe).order_by(Recipe.title)
     if (current_user.is_authenticated and request.args.get("d") is not None):
         recipesQuery = recipesQuery.filter(Recipe.deleted == True)
         if (current_user.id != 1):
