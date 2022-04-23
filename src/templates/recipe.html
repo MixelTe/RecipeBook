@@ -51,7 +51,6 @@
                 const description = document.getElementById('description');
                 description.innerHTML = marked.parse(template.content.textContent);
             </script>
-            <!-- <p class="fs-3">{{recipe.description}}</p> -->
         </div>
     </div>
     {% if current_user.is_authenticated and current_user.id == recipe.creator %}
