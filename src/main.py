@@ -1,4 +1,3 @@
-from datetime import datetime, timedelta
 from flask import Flask, jsonify, make_response, redirect, render_template, request
 from flask_restful import Api
 from flask_login import LoginManager
@@ -9,23 +8,11 @@ from blueprints.pages import blueprint as blueprint_pages
 from blueprints.other import blueprint as blueprint_other
 from data.users import User
 import logging
+from logger import setLogging
+import traceback
 
 
-def customTime(*args):
-    utc_dt = datetime.utcnow()
-    utc_dt += timedelta(hours=3)
-    return utc_dt.timetuple()
-
-
-logging.basicConfig(
-    level=logging.DEBUG,
-    filename='RecipeBook.log',
-    format='%(asctime)s %(levelname)-8s %(name)s     %(message)s',
-    encoding="utf-8"
-)
-logging.getLogger("werkzeug").disabled = True
-logging.Formatter.converter = customTime
-
+setLogging()
 app = Flask(__name__)
 api = Api(app)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
@@ -58,7 +45,7 @@ def not_found(error):
 @app.errorhandler(Exception)
 def internal_server_error(error):
     print(error)
-    logging.error(error)
+    logging.error(f'{error}\n{traceback.format_exc()}')
     if (request.path.startswith("/api/")):
         return make_response(jsonify({'error': 'Internal Server Error'}), 500)
     else:

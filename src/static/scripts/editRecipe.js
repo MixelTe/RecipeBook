@@ -108,7 +108,7 @@ btn_submit.addEventListener("click", () =>
         try
         {
             const json = await v.json();
-            window.location.replace(`/recipe/${json.id}`);
+            window.location.replace(`/recipe/${json.id || recipeId}`);
         }
         catch
         {

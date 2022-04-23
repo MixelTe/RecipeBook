@@ -4,9 +4,9 @@ from data import db_session
 from data.users import User
 from data.recipes import Recipe
 from data.categories import Category
-from data.ingredients import Ingredient
+from data.ingredients import Ingredient, association_table as RecipesIngredients
 from data.pictures import Picture
-from sqlalchemy import func
+from sqlalchemy import func, insert
 import logging
 import base64
 
@@ -54,9 +54,25 @@ def editRecipe(id):
                 if (img["preview"]):
                     picture.preview = base64.b64decode(img["preview"].split(',')[1] + '==')
                 recipe.pictures.append(picture)
+        for i in range(len(recipe.ingredients) - 1, -1, -1):
+            ingredient = recipe.ingredients[i]
+            recipe.ingredients.remove(ingredient)
+        session.commit()
+        for el in data["ingredients"]:
+            id, count = el["id"], el["count"]
+            ingredient = session.query(Ingredient).get(id)
+            if (ingredient):
+                session.execute(
+                    insert(RecipesIngredients),
+                    {"recipe": recipe.id, "ingredient": ingredient.id, "count": count}
+                )
+                # session.execute("""
+                #     insert into RecipesIngredients
+                #     (:recipe, :ingredient, :count)
+                # """, {"recipe": recipe.id, "ingredient": ingredient.id, "count": count})
+        session.commit()
     except Exception as x:
         return jsonify({"result": "Bad Request"}), 400
-    session.commit()
     if (id == 0):
         logging.info(f"Added recipe: {recipe.id} {recipe.title}")
     else:
