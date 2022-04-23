@@ -91,7 +91,7 @@ def index():
         user = users.pop(i)
         users.insert(0, user)
     data = {
-        "title": title,
+        "title": "Книга рецептов",
         "recipes": recipes,
         "ingredients": ingredients,
         "categories": categoriesAll,

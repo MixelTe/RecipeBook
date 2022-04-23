@@ -215,7 +215,7 @@ function setInput(inpId, listId, btnId, getUsed, addNew)
             for (let j = 0; j < used.length; j++)
             {
                 const el = used[j];
-                if (data.title == el)
+                if (data.title == el.title)
                 {
                     isUsed = true;
                     break

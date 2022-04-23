@@ -144,6 +144,7 @@ class IngredientListResource(Resource):
     def get(self):
         db_sess = db_session.create_session()
         ingredients = db_sess.query(Ingredient).all()
+        ingredients.sort(key=lambda el: el.title)
         return jsonify([item.to_dict(only=("id", "title")) for item in ingredients])
 
     def post(self):
@@ -160,6 +161,7 @@ class CategoryListResource(Resource):
     def get(self):
         db_sess = db_session.create_session()
         categories = db_sess.query(Category).all()
+        categories.sort(key=lambda el: el.title)
         return jsonify([item.to_dict(only=("id", "title")) for item in categories])
 
     def post(self):

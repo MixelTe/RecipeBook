@@ -21,5 +21,5 @@ class RegisterForm(FlaskForm):
     email = EmailField('Email', validators=[DataRequired("Необходимо заполнить"), userExistCheck])
     password = PasswordField('Пароль', validators=[DataRequired("Необходимо заполнить")])
     password_again = PasswordField('Повторите пароль', validators=[DataRequired("Необходимо заполнить"), passwordCheck])
-    submit = SubmitField('Зарегестрироваться')
+    submit = SubmitField('Зарегистрироваться')
 
