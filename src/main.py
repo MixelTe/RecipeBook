@@ -15,8 +15,8 @@ import traceback
 setLogging()
 app = Flask(__name__)
 api = Api(app)
-app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
-app.config['JWT_SECRET_KEY'] = 'yandexlyceum_secret_key'
+app.config['SECRET_KEY'] = 'secret_key_for_recipe_book_project'
+app.config['JWT_SECRET_KEY'] = 'secret_key_for_recipe_book_project'
 login_manager = LoginManager()
 login_manager.init_app(app)
 jwt_manager = JWTManager(app)
