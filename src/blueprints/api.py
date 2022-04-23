@@ -53,7 +53,7 @@ def editRecipe(id):
                 picture.img = base64.b64decode(img["img"].split(',')[1] + '==')
                 if (img["preview"]):
                     picture.preview = base64.b64decode(img["preview"].split(',')[1] + '==')
-                recipe.pictures.blueprintend(picture)
+                recipe.pictures.append(picture)
     except Exception as x:
         return jsonify({"result": "Bad Request"}), 400
     session.commit()
