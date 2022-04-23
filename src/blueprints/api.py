@@ -113,3 +113,20 @@ def deleteRecipe(id):
     logging.info(f"Deleted recipe: {recipe.id} {recipe.title}")
 
     return jsonify({"result": "OK"}), 200
+
+
+@blueprint.route("/api/restoreRecipe/<int:id>", methods=['POST'])
+@login_required
+def restoreRecipe(id):
+    session = db_session.create_session()
+    recipe: Recipe = session.query(Recipe).get(id)
+    if (not recipe):
+        return jsonify({"result": "Not Found"}), 404
+    if (recipe.creator != current_user.id):
+        return jsonify({"result": "Forbidden"}), 404
+
+    recipe.deleted = False
+    session.commit()
+    logging.info(f"Restored recipe: {recipe.id} {recipe.title}")
+
+    return jsonify({"result": "OK"}), 200

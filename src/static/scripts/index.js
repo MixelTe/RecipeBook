@@ -145,8 +145,10 @@ search_form.addEventListener("submit", e =>
     if (data.usersRemove.length != 0) dataFull.usersRemove = data.usersRemove.join("-");
     const title = inp_title.value.trim();
     if (title != "") dataFull.title = title;
-    const params = new URLSearchParams(dataFull).toString();
-    window.location.href = "/?" + params
+    const params = new URLSearchParams(dataFull);
+    const curUrlParams = new URLSearchParams(window.location.search);
+    if (curUrlParams.has("d")) params.append("d", "")
+    window.location.href = "/?" + params.toString()
     return false;
 });
 

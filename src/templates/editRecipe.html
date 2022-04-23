@@ -114,6 +114,20 @@
             <button id="btn-submit" class="btn btn-success">Сохранить</button>
         </div>
     </div>
+    {% if recipe.deleted %}
+    <div class="row justify-content-center mb-4">
+        <div class="col col-lg-10 d-flex justify-content-between">
+            <div class="btn-group dropend">
+                <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+                    Восстановить рецепт
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton2">
+                <li><button class="dropdown-item" id="btn-restore">Восстановить</button></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    {% else %}
     <div class="row justify-content-center mb-4">
         <div class="col col-lg-10 d-flex justify-content-between">
             <div class="btn-group dropend">
@@ -126,6 +140,7 @@
             </div>
         </div>
     </div>
+    {% endif %}
 </div>
 <script>
     var editor = new Editor({

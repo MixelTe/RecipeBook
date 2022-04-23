@@ -3,6 +3,7 @@ const urlSplited = window.location.href.split("/")
 const recipeId = urlSplited[urlSplited.length - 1];
 const btn_submit = document.getElementById("btn-submit");
 const btn_delete = document.getElementById("btn-delete");
+const btn_restore = document.getElementById("btn-restore");
 const inp_title = document.getElementById("inp-title");
 const img_container = document.getElementById("img-container");
 const container_category = document.getElementById("container-category");
@@ -120,24 +121,48 @@ btn_submit.addEventListener("click", () =>
         else window.location.replace(`/recipe/${recipeId}`);
     })
 });
-btn_delete.addEventListener("click", async () =>
+if (btn_delete)
 {
-    modal_title.innerText = "Удалить рецепт?";
-    if (await openModal())
+    btn_delete.addEventListener("click", async () =>
     {
-        btn_submit.disabled = true;
-        btn_delete.disabled = true;
-        spinner.classList.add("spinner-active");
-        document.body.style.overflow = "hidden";
-
-        fetch(`/api/deleteRecipe/${recipeId}`, {
-            method: 'POST',
-        }).finally(() =>
+        modal_title.innerText = "Удалить рецепт?";
+        if (await openModal())
         {
-            window.location.replace(`/`);
-        })
-    }
-})
+            btn_submit.disabled = true;
+            btn_delete.disabled = true;
+            spinner.classList.add("spinner-active");
+            document.body.style.overflow = "hidden";
+
+            fetch(`/api/deleteRecipe/${recipeId}`, {
+                method: 'POST',
+            }).finally(() =>
+            {
+                window.location.replace(`/`);
+            })
+        }
+    })
+}
+if (btn_restore)
+{
+    btn_restore.addEventListener("click", async () =>
+    {
+        modal_title.innerText = "Восстановить рецепт?";
+        if (await openModal())
+        {
+            btn_submit.disabled = true;
+            btn_restore.disabled = true;
+            spinner.classList.add("spinner-active");
+            document.body.style.overflow = "hidden";
+
+            fetch(`/api/restoreRecipe/${recipeId}`, {
+                method: 'POST',
+            }).finally(() =>
+            {
+                window.location.replace(`/recipe/${recipeId}`);
+            })
+        }
+    })
+}
 
 
 function setInput(inpId, listId, btnId, getUsed, addNew)

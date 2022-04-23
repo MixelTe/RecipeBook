@@ -32,8 +32,10 @@ def index():
 
     session = db_session.create_session()
     recipesQuery = session.query(Recipe)
-    if (current_user.is_authenticated and current_user.id == 1 and request.args.get("d") is not None):
+    if (current_user.is_authenticated and request.args.get("d") is not None):
         recipesQuery = recipesQuery.filter(Recipe.deleted == True)
+        if (current_user.id != 1):
+            recipesQuery = recipesQuery.filter(Recipe.creator == current_user.id)
     else:
         recipesQuery = recipesQuery.filter(Recipe.deleted == False)
 
@@ -160,9 +162,12 @@ def logout():
 @blueprint.route("/recipe/<int:id>")
 def recipe(id):
     session = db_session.create_session()
-    recipe = session.query(Recipe).get(id)
+    recipe: Recipe = session.query(Recipe).get(id)
     if (not recipe):
         return render_template("error.html", title="404", text="Рецепт не найден"), 404
+    if (recipe.deleted):
+        if ((not current_user.is_authenticated) or (current_user.id not in [recipe.creator, 1])):
+            return render_template("error.html", title="404", text="Рецепт не найден"), 404
     ingredients = session.execute("""
         select i.title, ri.count
         from RecipesIngredients as ri
