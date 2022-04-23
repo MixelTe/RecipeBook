@@ -86,6 +86,16 @@ btn_submit.addEventListener("click", () =>
     btn_delete.disabled = true;
     spinner.classList.add("spinner-active");
     document.body.style.overflow = "hidden";
+    function onError()
+    {
+        setBeforeUnloadListener();
+        modal_title.innerText = "Не удалось отправить данные";
+        btn_submit.disabled = false;
+        btn_delete.disabled = false;
+        spinner.classList.remove("spinner-active");
+        document.body.style.overflow = "auto";
+        openModal();
+    }
 
     const imgs = [];
     for (let i = 0; i < img_container.children.length; i++)
@@ -119,17 +129,16 @@ btn_submit.addEventListener("click", () =>
         try
         {
             const json = await v.json();
-            window.location.replace(`/recipe/${json.id || recipeId}`);
+            if (json.id) window.location.replace(`/recipe/${json.id}`);
+            else onError();
         }
         catch
         {
-            window.location.replace(`/recipe/${recipeId}`);
+            onError();
         }
     }, r =>
     {
-        removeBeforeUnloadListener();
-        if (`${recipeId}` == "0") window.location.replace(`/`);
-        else window.location.replace(`/recipe/${recipeId}`);
+        onError();
     })
 });
 if (btn_delete)
@@ -575,12 +584,14 @@ function sendItems(type, items)
                     if (type == "category")
                     {
                         options_category.push({ id: json.id, title: item });
+                        options_category.sort((a, b) => a.title < b.title ? -1 : 1)
                         onDelete_category();
 
                     }
                     else
                     {
                         options_ingredient.push({ id: json.id, title: item });
+                        options_ingredient.sort((a, b) => a.title < b.title ? -1 : 1)
                         onDelete_ingredient();
                     }
                 }
