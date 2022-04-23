@@ -14,8 +14,8 @@ const modal_title = document.getElementById("modal-title");
 const spinner = document.getElementById("spinner");
 inp_title.focus();
 
-const onDelete_category = setInput("inp-category", "category-suggestions", "btn-category", getUsed_category, add_category);
-const onDelete_ingredient = setInput("inp-ingredient", "ingredient-suggestions", "btn-ingredient", getUsed_ingredient, add_ingredient);
+const { setOptions: onDelete_category, options: options_category } = setInput("inp-category", "category-suggestions", "btn-category", getUsed_category, add_category);
+const { setOptions: onDelete_ingredient, options: options_ingredient } = setInput("inp-ingredient", "ingredient-suggestions", "btn-ingredient", getUsed_ingredient, add_ingredient);
 
 
 for (let i = 0; i < img_container.children.length; i++)
@@ -230,7 +230,7 @@ function setInput(inpId, listId, btnId, getUsed, addNew)
         inp_ingredient.value = "";
         setOptions();
     });
-    return setOptions;
+    return { setOptions, options };
 }
 
 async function onImgDelete(el)
@@ -389,4 +389,182 @@ function add_ingredient(id, title)
 function cs(str)
 {
     return str.replace(/\s+/g, " ").trim()
+}
+
+
+
+const editModal = document.getElementById("modal-edit");
+const editModal_title = document.getElementById("modal-edit-title");
+const editModal_table = document.getElementById("modal-edit-table");
+const editModal_inp = document.getElementById("inp-modal-edit");
+const editModal_btn = document.getElementById("btn-modal-edit");
+const editModal_ok = document.getElementById("btn-modal-edit-ok");
+
+const btn_addCategory = document.getElementById("btn-category-new");
+const btn_addIngredient = document.getElementById("btn-ingredient-new");
+
+const openModalAsync = createAsyncModal();
+
+btn_addCategory.addEventListener("click", () => openAdder("category"))
+btn_addIngredient.addEventListener("click", () => openAdder("ingredient"))
+
+let editModal_curItems = [];
+let editModal_newItems = [];
+
+editModal_btn.addEventListener("click", () =>
+{
+    const value = editModal_inp.value.replace(/\s+/g, " ").trim();
+    if (value != "" && !containsStr(editModal_curItems, value))
+    {
+        editModal_newItems.push(value);
+        const li = document.createElement("li");
+        editModal_table.appendChild(li);
+        li.innerText = value;
+    }
+    editModal_inp.value = "";
+});
+
+
+async function openAdder(type)
+{
+    editModal_title.innerText = type == "category" ? "Категории" : "Ингредиенты";
+    btn_addCategory.disabled = true;
+    btn_addIngredient.disabled = true;
+    document.body.style.overflow = "hidden";
+    spinner.classList.add("spinner-active");
+    editModal_newItems = [];
+
+    editModal_curItems = await getItems(type);
+    spinner.classList.remove("spinner-active");
+    editModal_table.innerHTML = "";
+    for (let i = 0; i < editModal_curItems.length; i++)
+    {
+        const item = editModal_curItems[i];
+        const li = document.createElement("li");
+        editModal_table.appendChild(li);
+        li.innerText = item.title;
+    }
+
+    const r = await openModalAsync();
+
+    if (editModal_newItems.length != 0 && r)
+    {
+        spinner.classList.add("spinner-active");
+        await sendItems(type, editModal_newItems);
+        spinner.classList.remove("spinner-active");
+    }
+    btn_addCategory.disabled = false;
+    btn_addIngredient.disabled = false;
+    document.body.style.overflow = "auto";
+}
+
+function createAsyncModal()
+{
+    let resolve_ = null;
+    const modal = new bootstrap.Modal(editModal);
+    function openModal()
+    {
+        return new Promise((resolve, reject) =>
+        {
+            resolve_ = resolve;
+            modal.show()
+        });
+    }
+
+    editModal.addEventListener('hidden.bs.modal', e =>
+    {
+        if (resolve_)
+        {
+            resolve_(false);
+            resolve_ = null;
+        }
+    });
+    editModal_ok.addEventListener("click", () =>
+    {
+        if (resolve_)
+        {
+            resolve_(true);
+            resolve_ = null;
+            modal.hide()
+        }
+    });
+    return openModal;
+}
+
+function getItems(type)
+{
+    return new Promise((resolve, reject) =>
+    {
+        const url = type == "category" ? "/api/categories" : "/api/ingredients";
+        fetch(url, {
+            method: 'GET'
+        }).then(async v =>
+        {
+            const json = await v.json();
+            resolve(json.error ? [] : json);
+        }, r =>
+        {
+            resolve([]);
+        })
+    });
+}
+
+function containsStr(list, value)
+{
+    value = value.replace(/\s+/g, " ").trim().toLowerCase();
+    for (let i = 0; i < list.length; i++)
+    {
+        const el = list[i].title.replace(/\s+/g, " ").trim().toLowerCase();
+        if (el == value) return true;
+    }
+    return false;
+}
+
+function sendItems(type, items)
+{
+    return new Promise((resolve, reject) =>
+    {
+        if (items.length == 0)
+        {
+            resolve();
+            return
+        }
+        let sended = 0;
+        const all = items.length
+        const url = type == "category" ? "/api/categories" : "/api/ingredients";
+        items.forEach(item => {
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({"title": item}),
+            }).then(async v =>
+            {
+                const json = await v.json();
+                if (json.id)
+                {
+                    if (type == "category")
+                    {
+                        options_category.push({ id: json.id, title: item });
+                        onDelete_category();
+
+                    }
+                    else
+                    {
+                        options_ingredient.push({ id: json.id, title: item });
+                        onDelete_ingredient();
+                    }
+                }
+            }, () => { },
+            ).finally(() =>
+            {
+                sended += 1;
+                if (sended >= all)
+                {
+                    resolve()
+                }
+            })
+        });
+    });
 }

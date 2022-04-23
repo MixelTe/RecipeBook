@@ -64,7 +64,7 @@
             </div>
         </div>
         <div class="col-12 col-md-5 col-lg-4 text-end">
-            <button class="btn btn-success">Добавить новую категорию</button>
+            <button class="btn btn-success" id="btn-category-new">Добавить новую категорию</button>
         </div>
     </div>
     <div class="row justify-content-center">
@@ -96,7 +96,7 @@
             </div>
         </div>
         <div class="col-12 col-md-5 col-lg-4 text-end">
-            <button class="btn btn-success">Добавить новый ингредиент</button>
+            <button class="btn btn-success" id="btn-ingredient-new">Добавить новый ингредиент</button>
         </div>
     </div>
     <div class="row justify-content-center mb-4">
@@ -163,6 +163,27 @@
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
           <button type="button" class="btn btn-primary" id="btn-modal-ok">ОК</button>
+        </div>
+      </div>
+    </div>
+</div>
+<div class="modal" tabindex="-1" id="modal-edit">
+    <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modal-edit-title">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <ul id="modal-edit-table"></ul>
+            <div>
+                <input type="text" id="inp-modal-edit">
+                <button class="btn btn-success" id="btn-modal-edit">Добавить</button>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+          <button type="button" class="btn btn-primary" id="btn-modal-edit-ok">Сохранить</button>
         </div>
       </div>
     </div>

@@ -1,5 +1,6 @@
 from flask import Blueprint, abort, jsonify, make_response, request
 from flask_login import current_user, login_required
+from flask_restful import abort as abort_restful, Resource, reqparse
 from data import db_session
 from data.users import User
 from data.recipes import Recipe
@@ -130,3 +131,37 @@ def restoreRecipe(id):
     logging.info(f"Restored recipe: {recipe.id} {recipe.title}")
 
     return jsonify({"result": "OK"}), 200
+
+
+parser_title = reqparse.RequestParser()
+parser_title.add_argument("title", required=True)
+
+
+class IngredientListResource(Resource):
+    def get(self):
+        db_sess = db_session.create_session()
+        ingredients = db_sess.query(Ingredient).all()
+        return jsonify([item.to_dict(only=("id", "title")) for item in ingredients])
+
+    def post(self):
+        args = parser_title.parse_args()
+        db_sess = db_session.create_session()
+        ingredient = Ingredient(title=str(args["title"]))
+        db_sess.add(ingredient)
+        db_sess.commit()
+        return jsonify({'success': 'OK', "id": ingredient.id})
+
+
+class CategoryListResource(Resource):
+    def get(self):
+        db_sess = db_session.create_session()
+        categories = db_sess.query(Category).all()
+        return jsonify([item.to_dict(only=("id", "title")) for item in categories])
+
+    def post(self):
+        args = parser_title.parse_args()
+        db_sess = db_session.create_session()
+        category = Category(title=str(args["title"]))
+        db_sess.add(category)
+        db_sess.commit()
+        return jsonify({'success': 'OK', "id": category.id})
