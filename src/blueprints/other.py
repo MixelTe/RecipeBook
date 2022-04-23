@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
+import logging
 
 
 blueprint = Blueprint(
@@ -7,6 +8,7 @@ blueprint = Blueprint(
     __name__,
     template_folder='templates'
 )
+logger = logging.getLogger("other")
 
 
 def time():
@@ -17,4 +19,5 @@ def time():
 
 @blueprint.route("/other/tlop/access/<int:code>")
 def tlop_access(code):
+    logger.info(f"{request.remote_addr} - Code: {code} Access: {'true' if code == 0 else 'false'}")
     return jsonify({"access": code == 0}), 200
