@@ -152,6 +152,7 @@ class IngredientListResource(Resource):
         ingredient = Ingredient(title=str(args["title"]))
         db_sess.add(ingredient)
         db_sess.commit()
+        logging.info(f"Added Ingredient: {ingredient.id} {ingredient.title}")
         return jsonify({'success': 'OK', "id": ingredient.id})
 
 
@@ -167,4 +168,5 @@ class CategoryListResource(Resource):
         category = Category(title=str(args["title"]))
         db_sess.add(category)
         db_sess.commit()
+        logging.info(f"Added Category: {category.id} {category.title}")
         return jsonify({'success': 'OK', "id": category.id})

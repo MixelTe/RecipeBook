@@ -37,10 +37,19 @@ for (let i = 0; i < container_ingredient.children.length; i += 2)
     const btn = el2.children[1];
     btn.addEventListener("click", () => delete_ingredient(el1, el2));
 }
+inp_title.addEventListener("change", () =>
+{
+    setBeforeUnloadListener();
+})
+editor.codemirror.on('change', () => {
+    setBeforeUnloadListener();
+    console.log();
+});
 inp_img.addEventListener("change", () =>
 {
     if (inp_img.files.length > 0)
     {
+        setBeforeUnloadListener();
         const img = document.createElement("img");
         img.src = URL.createObjectURL(inp_img.files[0]);
         img.id = "-1"
@@ -106,6 +115,7 @@ btn_submit.addEventListener("click", () =>
         body: JSON.stringify(data),
     }).then(async v =>
     {
+        removeBeforeUnloadListener();
         try
         {
             const json = await v.json();
@@ -117,6 +127,7 @@ btn_submit.addEventListener("click", () =>
         }
     }, r =>
     {
+        removeBeforeUnloadListener();
         if (`${recipeId}` == "0") window.location.replace(`/`);
         else window.location.replace(`/recipe/${recipeId}`);
     })
@@ -137,6 +148,7 @@ if (btn_delete)
                 method: 'POST',
             }).finally(() =>
             {
+                removeBeforeUnloadListener();
                 window.location.replace(`/`);
             })
         }
@@ -158,6 +170,7 @@ if (btn_restore)
                 method: 'POST',
             }).finally(() =>
             {
+                removeBeforeUnloadListener();
                 window.location.replace(`/recipe/${recipeId}`);
             })
         }
@@ -226,6 +239,7 @@ function setInput(inpId, listId, btnId, getUsed, addNew)
             }
         }
         if (!exist) return;
+        setBeforeUnloadListener();
         addNew(opt.id, opt.title);
         inp_ingredient.value = "";
         setOptions();
@@ -238,16 +252,19 @@ async function onImgDelete(el)
     modal_title.innerText = "Удалить картинку?";
     if (await openModal())
     {
+        setBeforeUnloadListener();
         img_container.removeChild(el);
     }
 }
 function delete_category(el)
 {
+    setBeforeUnloadListener();
     container_category.removeChild(el);
     onDelete_category();
 }
 function delete_ingredient(el1, el2)
 {
+    setBeforeUnloadListener();
     container_ingredient.removeChild(el1);
     container_ingredient.removeChild(el2);
     onDelete_ingredient();
@@ -346,6 +363,7 @@ function getUsed_ingredient()
 }
 function add_category(id, title)
 {
+    setBeforeUnloadListener();
     const container = document.createElement("span");
     container.classList.add("badge");
     container.classList.add("bg-secondary");
@@ -366,6 +384,7 @@ function add_category(id, title)
 }
 function add_ingredient(id, title)
 {
+    setBeforeUnloadListener();
     const dt = document.createElement("dt");
     dt.classList.add("col-sm-3");
     dt.innerText = title;
@@ -568,4 +587,22 @@ function sendItems(type, items)
             })
         });
     });
+}
+
+
+function beforeUnloadListener(e)
+{
+    e.preventDefault();
+    return e.returnValue = "Вы уверены, что хотите закрыть страницу? Все изменения будут потеряны!";
+};
+let beforeUnloadListenerAdded = false;
+function setBeforeUnloadListener()
+{
+    if (beforeUnloadListenerAdded) return;
+    beforeUnloadListenerAdded = true;
+    window.addEventListener("beforeunload", beforeUnloadListener);
+}
+function removeBeforeUnloadListener()
+{
+    window.removeEventListener("beforeunload", beforeUnloadListener);
 }
