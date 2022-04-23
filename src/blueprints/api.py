@@ -58,6 +58,9 @@ def editRecipe(id):
         for i in range(len(recipe.ingredients) - 1, -1, -1):
             ingredient = recipe.ingredients[i]
             recipe.ingredients.remove(ingredient)
+        for i in range(len(recipe.categories) - 1, -1, -1):
+            category = recipe.categories[i]
+            recipe.categories.remove(category)
         session.commit()
         for el in data["ingredients"]:
             id, count = el["id"], el["count"]
@@ -67,10 +70,10 @@ def editRecipe(id):
                     insert(RecipesIngredients),
                     {"recipe": recipe.id, "ingredient": ingredient.id, "count": count}
                 )
-                # session.execute("""
-                #     insert into RecipesIngredients
-                #     (:recipe, :ingredient, :count)
-                # """, {"recipe": recipe.id, "ingredient": ingredient.id, "count": count})
+        for id in data["categories"]:
+            category = session.query(Category).get(id)
+            if (category):
+                recipe.categories.append(category)
         session.commit()
     except Exception as x:
         return jsonify({"result": "Bad Request"}), 400
