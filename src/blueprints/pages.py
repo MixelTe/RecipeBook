@@ -123,7 +123,7 @@ def register():
             email=form.email.data,
         )
         user.set_password(form.password.data)
-        logging.info(f"Added user: {user.name} {user.email}")
+        logging.info(f"Added User: {user.name} {user.email}")
         db_sess = db_session.create_session()
         db_sess.add(user)
         db_sess.commit()

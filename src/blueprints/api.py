@@ -78,9 +78,9 @@ def editRecipe(Id):
     except Exception as x:
         return jsonify({"result": "Bad Request"}), 400
     if (Id == 0):
-        logging.info(f"Added recipe: {recipe.id} {recipe.title}")
+        logging.info(f"Added Recipe: {recipe.id} {recipe.title}")
     else:
-        logging.info(f"Updated recipe: {recipe.id} {recipe.title}")
+        logging.info(f"Updated Recipe: {recipe.id} {recipe.title}")
 
     return jsonify({"result": "OK", "id": recipe.id}), 200
 
@@ -114,7 +114,7 @@ def deleteRecipe(id):
 
     recipe.deleted = True
     session.commit()
-    logging.info(f"Deleted recipe: {recipe.id} {recipe.title}")
+    logging.info(f"Deleted Recipe: {recipe.id} {recipe.title}")
 
     return jsonify({"result": "OK"}), 200
 
@@ -131,7 +131,7 @@ def restoreRecipe(id):
 
     recipe.deleted = False
     session.commit()
-    logging.info(f"Restored recipe: {recipe.id} {recipe.title}")
+    logging.info(f"Restored Recipe: {recipe.id} {recipe.title}")
 
     return jsonify({"result": "OK"}), 200
 
