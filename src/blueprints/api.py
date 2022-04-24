@@ -22,13 +22,13 @@ blueprint = Blueprint(
 
 @blueprint.route("/api/editRecipe/<int:id>", methods=['POST'])
 @login_required
-def editRecipe(id):
+def editRecipe(Id):
     session = db_session.create_session()
-    if (id == 0):
+    if (Id == 0):
         recipe = Recipe(creator=current_user.id)
         session.add(recipe)
     else:
-        recipe: Recipe = session.query(Recipe).get(id)
+        recipe: Recipe = session.query(Recipe).get(Id)
         if (not recipe):
             return jsonify({"result": "Not Found"}), 404
         if (recipe.creator != current_user.id):
@@ -77,7 +77,7 @@ def editRecipe(id):
         session.commit()
     except Exception as x:
         return jsonify({"result": "Bad Request"}), 400
-    if (id == 0):
+    if (Id == 0):
         logging.info(f"Added recipe: {recipe.id} {recipe.title}")
     else:
         logging.info(f"Updated recipe: {recipe.id} {recipe.title}")
