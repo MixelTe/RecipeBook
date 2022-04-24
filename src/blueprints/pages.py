@@ -11,6 +11,9 @@ from forms.login import LoginForm
 import math
 import logging
 
+from forms.userName import UserNameForm
+from forms.userPassword import UserPasswordForm
+
 
 blueprint = Blueprint(
     'pages',
@@ -207,3 +210,38 @@ def editRecipe(id):
         "categoriesAll": categoriesAll,
     }
     return render_template('/editRecipe.html', **data)
+
+
+@blueprint.route("/account")
+@login_required
+def account():
+    return render_template("account.html", title="Личный кабинет", user=current_user)
+
+
+@blueprint.route("/editUserName", methods=['GET', 'POST'])
+@login_required
+def editUserName():
+    form = UserNameForm()
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        user: User = db_sess.query(User).get(current_user.id)
+        oldName = user.name
+        user.name = form.name.data
+        logging.info(f"Updated User name: {current_user.id} {oldName} -> {user.name}")
+        db_sess.commit()
+        return redirect('/account')
+    return render_template('editForm.html', title='Редактирование имени', form=form)
+
+
+@blueprint.route("/editUserPassword", methods=['GET', 'POST'])
+@login_required
+def editUserPassword():
+    form = UserPasswordForm()
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        user: User = db_sess.query(User).get(current_user.id)
+        user.set_password(form.password_new.data)
+        logging.info(f"Updated User password: {user.id}")
+        db_sess.commit()
+        return redirect('/account')
+    return render_template('editForm.html', title='Смена пароля', form=form)
