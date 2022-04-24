@@ -22,13 +22,13 @@ blueprint = Blueprint(
 
 @blueprint.route("/api/editRecipe/<int:id>", methods=['POST'])
 @login_required
-def editRecipe(Id):
+def editRecipe(id):
     session = db_session.create_session()
-    if (Id == 0):
+    if (id == 0):
         recipe = Recipe(creator=current_user.id)
         session.add(recipe)
     else:
-        recipe: Recipe = session.query(Recipe).get(Id)
+        recipe: Recipe = session.query(Recipe).get(id)
         if (not recipe):
             return jsonify({"result": "Not Found"}), 404
         if (recipe.creator != current_user.id):
@@ -63,21 +63,21 @@ def editRecipe(Id):
             recipe.categories.remove(category)
         session.commit()
         for el in data["ingredients"]:
-            id, count = el["id"], el["count"]
-            ingredient = session.query(Ingredient).get(id)
+            id_, count = el["id"], el["count"]
+            ingredient = session.query(Ingredient).get(id_)
             if (ingredient):
                 session.execute(
                     insert(RecipesIngredients),
                     {"recipe": recipe.id, "ingredient": ingredient.id, "count": count}
                 )
-        for id in data["categories"]:
-            category = session.query(Category).get(id)
+        for id_ in data["categories"]:
+            category = session.query(Category).get(id_)
             if (category):
                 recipe.categories.append(category)
         session.commit()
     except Exception as x:
         return jsonify({"result": "Bad Request"}), 400
-    if (Id == 0):
+    if (id == 0):
         logging.info(f"Added Recipe: {recipe.id} {recipe.title}")
     else:
         logging.info(f"Updated Recipe: {recipe.id} {recipe.title}")
