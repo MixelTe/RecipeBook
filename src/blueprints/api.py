@@ -19,7 +19,6 @@ blueprint = Blueprint(
 )
 
 
-
 @blueprint.route("/api/editRecipe/<int:id>", methods=['POST'])
 @login_required
 def editRecipe(id):

@@ -19,4 +19,3 @@ class UserPasswordForm(FlaskForm):
     password_new = PasswordField('Новый пароль', validators=[DataRequired("Необходимо заполнить")])
     password_again = PasswordField('Повторите пароль', validators=[DataRequired("Необходимо заполнить"), passwordCheck])
     submit = SubmitField('Сохранить')
-

@@ -11,4 +11,3 @@ def getName():
 class UserNameForm(FlaskForm):
     name = StringField('Имя', validators=[DataRequired("Необходимо заполнить")], default=getName)
     submit = SubmitField('Сохранить')
-
